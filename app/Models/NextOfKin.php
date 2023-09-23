@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class NextOfKin extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'investor',
+        'firstname',
+        'lastname',
+        'othername',
+        'phone',
+        'address',
+        'relationship',
+    ];
 }

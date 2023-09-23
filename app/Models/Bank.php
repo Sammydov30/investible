@@ -5,17 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Investor extends Model
+class Bank extends Model
 {
     use HasFactory;
+    protected $table="banks";
     protected $fillable = [
-        'codenumber',
-        'firstname',
-        'lastname',
-        'othername',
-        'email',
-        'phone',
-        'address',
-        'status'
+        'bankid',
+        'bankcode',
+        'name',
     ];
 }

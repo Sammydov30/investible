@@ -89,7 +89,13 @@ class AdminController extends Controller
         if (!$admin) {
             return response()->json(["message"=>"This record doesn't exist", "status"=>"error"], 400);
         }
-        return new AdminSingleResource($admin);
+        //return new AdminSingleResource($admin);
+        $response=[
+            "message" => "Admin found",
+            'admin' => $admin,
+            "status" => "success"
+        ];
+        return response()->json($response, 200);
     }
 
     public function update(AdminRequest $request, Admin $admin)

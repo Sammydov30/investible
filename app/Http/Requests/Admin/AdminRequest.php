@@ -31,9 +31,8 @@ class AdminRequest extends FormRequest
             'firstname' => ['required', 'string', 'max:300'],
             'lastname' => ['required', 'string', 'max:300'],
             'phone' => ['required'],
-            'address' => ['required'],
-            'role' => ['required', 'numeric'],
-            'status' => ['required', 'numeric'],
+            'username' => ['required'],
+            'password' => ['required'],
         ];
     }
 

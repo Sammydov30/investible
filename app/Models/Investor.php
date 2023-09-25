@@ -14,7 +14,7 @@ class Investor extends Model
         'lastname',
         'othername',
         'email',
-        'phone',
+        'phonenumber',
         'address',
         'status'
     ];

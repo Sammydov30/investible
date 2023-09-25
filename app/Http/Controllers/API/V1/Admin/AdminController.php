@@ -115,6 +115,8 @@ class AdminController extends Controller
                 'lastname'=> $request->lastname,
                 'email' => $request->email,
                 'phone'=> $request->phone,
+                'username' => $request->username,
+                'password' => md5(sha1($request->password)),
                 'role' => '1',
                 'status' => '1',
             ]);

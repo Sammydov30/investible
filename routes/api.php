@@ -3,10 +3,12 @@
 use App\Http\Controllers\API\V1\Admin\AccountController;
 use App\Http\Controllers\API\V1\Admin\AdminController;
 use App\Http\Controllers\API\V1\Admin\BankController;
+use App\Http\Controllers\API\V1\Admin\InvestmentController;
 use App\Http\Controllers\API\V1\Admin\InvestorController;
 use App\Http\Controllers\API\V1\Admin\NextOfKinController;
 use App\Http\Controllers\API\V1\Admin\PlanController;
 use App\Http\Controllers\API\V1\Auth\AdminAuthController;
+use App\Models\Investment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +34,18 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('/admin/investor/accounts', AccountController::class);
         //plan
         Route::apiResource('/admin/plans', PlanController::class);
+        //Investment
+        Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
+        Route::post('/admin/investments/update/{investment}', [InvestmentController::class, 'update']);
+        Route::post('/admin/investments/uploadold', [InvestmentController::class, 'uploadold']);
+        Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
+        Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);
+        Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
+        Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
+        Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
+        Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
+        Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);
+
 
         Route::middleware(['restrictothers'])->group(function () {
             Route::post('/admin/create', [AdminController::class, 'register']);

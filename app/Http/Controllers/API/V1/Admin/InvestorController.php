@@ -41,17 +41,8 @@ class InvestorController extends Controller
             $perPage=10;
         }
 
-        $patients=$result->orderBY($sortBy, $sortOrder)->paginate($perPage);
-        //$patients=$result->orderBY($sortBy, $sortOrder)->get();
-
-        // $dataset = array(
-        //     "echo" => 1,
-        //     "totalrecords" => count($patients),
-        //     "totaldisplayrecords" => count($patients),
-        //     "data" => $patients
-        // );
-
-        return response()->json($patients, 200);
+        $investors=$result->orderBY($sortBy, $sortOrder)->paginate($perPage);
+        return response()->json($investors, 200);
     }
 
     public function store(CreateInvestorRequest $request)

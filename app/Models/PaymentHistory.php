@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentHistory extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'transfercode',
+        'investmentid',
+        'investorid',
+        'accountnumber',
+        'bankcode',
+        'accountname',
+        'amount',
+        'pdate',
+        'narration',
+        'status'
+    ];
 }

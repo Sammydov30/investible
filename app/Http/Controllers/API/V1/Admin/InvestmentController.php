@@ -23,14 +23,16 @@ class InvestmentController extends Controller
 {
     public function index(Request $request)
     {
-        // $result = Investor::with('investments');
-        $result = Investment::where('id', '!=', '0');
+        $result = Investment::with('investmentOwner', 'nok', 'bank');
         if (request()->input("search") != null) {
             $search=request()->input("search");
             $result->where('investmentid', "like", "%{$search}%");
         }
         if (request()->input("investor")!=null) {
             $result->where('investor', request()->input("investor"));
+        }
+        if (request()->input("type")!=null) {
+            $result->where('type', request()->input("type"));
         }
         if ((request()->input("sortBy")!=null) && in_array(request()->input("sortBy"), ['id', 'created_at'])) {
             $sortBy=request()->input("sortBy");
@@ -79,7 +81,7 @@ class InvestmentController extends Controller
         $amountpaidsofar='0';
         $timeduration=$planinfo->no_of;
         $timeremaining=$timeduration;
-        $startdate=$this->GetStartDate($request->agreementdate);
+        $startdate=$this->GetStartDate($request->agreementdate, $type);
         $stopdate=$this->GetStopDate($startdate, $timeduration, $type);
         $investment=Investment::create([
             'investmentid' => $this->getInvestmentNO(),
@@ -268,8 +270,6 @@ class InvestmentController extends Controller
             'payment' => $payment,
         ], 200);
     }
-
-
     public function paybulkWeeklyInvestment(Request $request)
     {
         $investments=Investment::where('type', '1')->where('status', '1')->get();
@@ -346,6 +346,83 @@ class InvestmentController extends Controller
         ], 200);
     }
 
+    public function paybulkMonthlyInvestment(Request $request)
+    {
+        $investments=Investment::where('type', '2')->where('status', '1')->get();
+        $k=1;
+        $refcode="IP".time();
+        $date=date("d-m-Y");
+        $mdate=date("F-Y");
+        /////////////////
+        ///Get Bulk data
+        ///////////////////
+        $bulkdata=[];
+        foreach ($investments as $investment) {
+            $newdata=(object)[
+                "bank_code"=> $investment->bankcode,
+                "account_number"=> $investment->accountnumber,
+                "amount"=> intval($investment->return),
+                "narration"=> "Investment Payment for ".$mdate,
+                "currency"=> "NGN",
+                "reference"=> $refcode.$k
+            ];
+            array_push($bulkdata, $newdata);
+            $k++;
+        }
+        //print_r($bulkdata);
+
+        /////////////////
+        ///Make Payment
+        ///////////////////
+        $paymentrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
+            "title"=> "Monthly Bulk Payment for ".$mdate,
+            "bulk_data"=> $bulkdata,
+        ]);
+        $res=$paymentrequest->json();
+        //print_r($res); exit();
+        if (!$res['status']) {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        $transferid=$res['data']['id'];
+        BulkPaymentHistory::created([
+            'transferid'=>$transferid,
+        ]);
+        /////////////////
+        ///Update records
+        ///////////////////
+        foreach ($investments as $investment) {
+            PaymentHistory::create([
+                'transfercode'=>$refcode.$k,
+                'investmentid'=>$investment->investmentid,
+                'investorid'=>$investment->investor,
+                'accountnumber'=>$investment->accountnumber,
+                'bankcode'=>$investment->bankcode,
+                'amount'=>$investment->return,
+                'pdate'=>$date,
+                'narration'=>"Investment Payment for ".$mdate,
+                'status'=>'0'
+            ]);
+            $newapsf=$investment->amountpaidsofar+$investment->return;
+            $newtr=$investment->timeremaining-1;
+            Investment::where('investmentid', $investment->investmentid)->update([
+                'amountpaidsofar'=>$newapsf,
+                'timeremaining'=>$newtr,
+                'lastpaymentdate'=>$date
+            ]);
+            $k++;
+        }
+        return response()->json([
+            "message"=>"Investment Payment Dispatched Successfully",
+            "status" => "success",
+        ], 200);
+    }
+
 
 
     public function destroy(Investor $investor)
@@ -371,12 +448,25 @@ class InvestmentController extends Controller
         }
         return "GIV".$investmentno;
     }
-    public function GetStartDate($adate){
+    public function GetStartDate($adate, $duration){
         $date = new DateTime($adate);
-        $date->modify('next monday');
-        $nextmonday = $date->format('d-m-Y');
-        $date = new DateTime($nextmonday);
-        $date->modify('+ 14 days');
+        if ($duration=='1') {
+            $date->modify('next monday');
+            $nextmonday = $date->format('d-m-Y');
+            $date = new DateTime($nextmonday);
+            $date->modify('+ 14 days');
+        } else {
+            $date->modify("first day of next month");
+            $month = $date->format('m');
+            $nextmonth = $date->format('d-m-Y');
+            $date = new DateTime($nextmonth);
+            if ($month=='02') {
+                $date->modify('+ 27 days');
+            } else {
+                $date->modify('+ 29 days');
+            }
+        }
+
         return $date->format('d-m-Y');
     }
 

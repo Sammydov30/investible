@@ -35,4 +35,17 @@ class Investment extends Model
         'lastpaymentdate',
         'status'
     ];
+
+    public function investmentOwner()
+    {
+        return $this->hasOne(Investor::class, 'codenumber', 'investor');
+    }
+    public function nok()
+    {
+        return $this->hasOne(NextOfKin::class, 'id', 'nextofkin');
+    }
+    public function bank()
+    {
+        return $this->hasOne(Bank::class, 'bankcode', 'bankcode');
+    }
 }

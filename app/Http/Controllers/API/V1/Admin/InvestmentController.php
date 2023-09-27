@@ -305,7 +305,7 @@ class InvestmentController extends Controller
             "bulk_data"=> $bulkdata,
         ]);
         $res=$paymentrequest->json();
-        print_r($res); exit();
+        //print_r($res); exit();
         if (!$res['status']) {
             return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
         }

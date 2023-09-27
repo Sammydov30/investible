@@ -237,8 +237,11 @@ class InvestmentController extends Controller
             "debit_currency"=> "NGN"
         ]);
         $res=$paymentrequest->json();
-        print_r($res); exit();
+        //print_r($res); exit();
         if (!$res['status']) {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
             return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
         }
         $payment=PaymentHistory::create([
@@ -273,7 +276,9 @@ class InvestmentController extends Controller
         $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
-
+        /////////////////
+        ///Get Bulk data
+        ///////////////////
         $bulkdata=[];
         foreach ($investments as $investment) {
             $newdata=(object)[
@@ -285,6 +290,36 @@ class InvestmentController extends Controller
                 "reference"=> $refcode.$k
             ];
             array_push($bulkdata, $newdata);
+            $k++;
+        }
+        //print_r($bulkdata);
+
+        /////////////////
+        ///Make Payment
+        ///////////////////
+        $paymentrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
+            "title"=> "Weekly Bulk Payment for ".$date,
+            "bulk_data"=> $bulkdata,
+        ]);
+        $res=$paymentrequest->json();
+        print_r($res); exit();
+        if (!$res['status']) {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        $transferid=$res['data']['id'];
+        BulkPaymentHistory::created([
+            'transferid'=>$transferid,
+        ]);
+        /////////////////
+        ///Update records
+        ///////////////////
+        foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,
                 'investmentid'=>$investment->investmentid,
@@ -305,24 +340,6 @@ class InvestmentController extends Controller
             ]);
             $k++;
         }
-        //print_r($bulkdata);
-
-        $paymentrequest = Http::withHeaders([
-            "content-type" => "application/json",
-            "Authorization" => "Bearer ".env('FW_KEY'),
-        ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
-            "title"=> "Weekly Bulk Payment for ".$date,
-            "bulk_data"=> $bulkdata,
-        ]);
-        $res=$paymentrequest->json();
-        //print_r($res);
-        if (!$res['status']) {
-            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
-        }
-        $transferid=$res['data']['id'];
-        BulkPaymentHistory::created([
-            'transferid'=>$transferid,
-        ]);
         return response()->json([
             "message"=>"Investment Payment Dispatched Successfully",
             "status" => "success",

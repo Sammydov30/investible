@@ -6,15 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Investment\CreateInvestmentRequest;
 use App\Http\Requests\Investment\UpdateInvestmentRequest;
 use App\Http\Requests\Investment\UploadOldInvestmentRequest;
-use App\Http\Requests\Investor\CreateInvestorRequest;
-use App\Http\Requests\Investor\UpdateInvestorRequest;
 use App\Models\Account;
 use App\Models\BulkPaymentHistory;
 use App\Models\Investment;
 use App\Models\Investor;
 use App\Models\PaymentHistory;
 use App\Models\Plan;
-use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -47,7 +44,7 @@ class InvestmentController extends Controller
         if (!empty(request()->input("perpage"))) {
             $perPage=request()->input("perpage");
         } else {
-            $perPage=10;
+            $perPage=100;
         }
 
         $investments=$result->orderBY($sortBy, $sortOrder)->paginate($perPage);
@@ -423,8 +420,6 @@ class InvestmentController extends Controller
         ], 200);
     }
 
-
-
     public function destroy(Investor $investor)
     {
         $investor->delete();
@@ -434,8 +429,6 @@ class InvestmentController extends Controller
         ];
         return response()->json($response, 200);
     }
-
-
 
     public function getInvestmentNO() {
         $i=0;
@@ -469,7 +462,6 @@ class InvestmentController extends Controller
 
         return $date->format('d-m-Y');
     }
-
     public function GetStopDate($sdate, $no_of, $duration){
         $date = new DateTime($sdate);
         if ($duration=='1') {

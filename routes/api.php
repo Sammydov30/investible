@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\Admin\BankController;
 use App\Http\Controllers\API\V1\Admin\InvestmentController;
 use App\Http\Controllers\API\V1\Admin\InvestorController;
 use App\Http\Controllers\API\V1\Admin\NextOfKinController;
+use App\Http\Controllers\API\V1\Admin\PaymentHistoryController;
 use App\Http\Controllers\API\V1\Admin\PlanController;
 use App\Http\Controllers\API\V1\Auth\AdminAuthController;
 use App\Models\Investment;
@@ -46,6 +47,8 @@ Route::prefix('v1')->group(function () {
         Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
         Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
         Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);
+        //Payment History
+        Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
 
 
         Route::middleware(['restrictothers'])->group(function () {

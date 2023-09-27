@@ -20,4 +20,16 @@ class PaymentHistory extends Model
         'narration',
         'status'
     ];
+    public function investmentOwner()
+    {
+        return $this->hasOne(Investor::class, 'codenumber', 'investorid');
+    }
+    public function investment()
+    {
+        return $this->hasOne(Investment::class, 'investmentid', 'investmentid');
+    }
+    public function bank()
+    {
+        return $this->hasOne(Bank::class, 'bankcode', 'bankcode');
+    }
 }

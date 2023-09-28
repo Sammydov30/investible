@@ -68,6 +68,7 @@ class InvestmentController extends Controller
 
     public function store(CreateInvestmentRequest $request)
     {
+
         $accountinfo=Account::where('id', $request->account)->first();
         $accountnumber=$accountinfo->accountnumber;
         $bankcode=$accountinfo->bankcode;
@@ -76,7 +77,7 @@ class InvestmentController extends Controller
         $amountpaid=$planinfo->amount;
         $amounttobereturned=(($planinfo->percentage/100)*$amountpaid)+$amountpaid;
         $percentage=$planinfo->percentage;
-        $return=$planinfo->returns;
+        $return=$planinfo->returns*$request->howmany;
         $amountpaidsofar='0';
         $timeduration=$planinfo->no_of;
         $timeremaining=$timeduration;

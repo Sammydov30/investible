@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\V1\Admin\AccountController;
+use App\Http\Controllers\API\V1\Admin\ActionLogController;
 use App\Http\Controllers\API\V1\Admin\AdminController;
 use App\Http\Controllers\API\V1\Admin\BankController;
 use App\Http\Controllers\API\V1\Admin\InvestmentController;
@@ -49,6 +50,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);
         //Payment History
         Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
+        //Action Logs
+        Route::get('/admin/fetchlogs', [ActionLogController::class, 'index']);
 
 
         Route::middleware(['restrictothers'])->group(function () {

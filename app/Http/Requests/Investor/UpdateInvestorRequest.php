@@ -33,7 +33,7 @@ class UpdateInvestorRequest extends FormRequest
             'othername' => ['string'],
             'phonenumber' => ['required', 'string', 'max:300'],
             //'email' => ['email', 'string'],
-            'address' => ['required', 'string']
+            //'address' => ['required', 'string']
         ];
     }
 

@@ -32,6 +32,7 @@ class CreateInvestmentRequest extends FormRequest
             'account' => ['required', 'string'],
             'nextofkin' => ['required', 'string'],
             'plan' => ['required', 'string'],
+            'howmany' => ['required', 'numeric', 'gt:0'],
             'agreementdate' => ['required', 'string'],
             'witnessname' => ['required', 'string'],
             'witnessaddress' => ['required', 'string'],

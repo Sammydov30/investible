@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\NextOfKin\CreateNextOfKinRequest;
 use App\Http\Requests\NextOfKin\UpdateNextOfKinRequest;
 use App\Models\NextOfKin;
+use App\Traits\ActionLogTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class NextOfKinController extends Controller
 {
+    use ActionLogTrait;
     public function index(Request $request)
     {
         $result = DB::table('next_of_kin');
@@ -57,6 +59,8 @@ class NextOfKinController extends Controller
             'address' => $request->address,
             'relationship' => $request->relationship,
         ]);
+        $details=json_encode($nextofkin);
+        $this->AddLog($details, 'nextofkin', 'Created');
         return response()->json([
             "message"=>"Kin Added Successfully",
             "status" => "success",
@@ -87,6 +91,8 @@ class NextOfKinController extends Controller
             'address' => $request->address,
             'relationship' => $request->relationship,
         ]);
+        $details=json_encode($nextofkin);
+        $this->AddLog($details, 'nextofkin', 'Updated');
         return response()->json([
             "message"=>"Next of Kin Added Successfully",
             "status" => "success",
@@ -96,6 +102,8 @@ class NextOfKinController extends Controller
 
     public function destroy(NextOfKin $nextofkin)
     {
+        $details=json_encode($nextofkin);
+        $this->AddLog($details, 'nextofkin', 'Deleted');
         $nextofkin->delete();
         $response=[
             "message" => "Next of Kin Deleted Successfully",

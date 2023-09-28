@@ -12,12 +12,14 @@ use App\Models\Investment;
 use App\Models\Investor;
 use App\Models\PaymentHistory;
 use App\Models\Plan;
+use App\Traits\ActionLogTrait;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class InvestmentController extends Controller
 {
+    use ActionLogTrait;
     public function index(Request $request)
     {
         $result = Investment::with('investmentOwner', 'nok', 'bank');
@@ -105,6 +107,7 @@ class InvestmentController extends Controller
             'witnessphone' => $request->witnessphone,
             'status' => '0',
         ]);
+        $this->AddLog(json_encode($investment), 'investment', 'Created');
         return response()->json([
             "message"=>"Investment Created Successfully",
             "status" => "success",
@@ -142,6 +145,7 @@ class InvestmentController extends Controller
             'witnessphone' => $request->witnessphone,
             'status' => $request->status,
         ]);
+        $this->AddLog(json_encode($investment), 'investment', 'Upload');
         return response()->json([
             "message"=>"Investment Created Successfully",
             "status" => "success",
@@ -176,6 +180,7 @@ class InvestmentController extends Controller
             'witnessaddress' => $request->witnessaddress,
             'witnessphone' => $request->witnessphone,
         ]);
+        $this->AddLog(json_encode($investment), 'investment', 'Updated');
         return response()->json([
             "message"=>"Investment Updated Successfully",
             "status" => "success",
@@ -198,7 +203,7 @@ class InvestmentController extends Controller
         Investment::where('timeremaining', '0')->update([
             'status' => '2',
         ]);
-
+        $this->AddLog('Got investment ready for '.$date, 'investment', 'GotReady');
         return response()->json([
             "message"=>"Investments are ready for period payment Successfully",
             "status" => "success",
@@ -254,6 +259,7 @@ class InvestmentController extends Controller
             'narration'=>"Investment Payment for ".$date,
             'status'=>'0'
         ]);
+        $this->AddLog(json_encode($payment), 'paymenthistory', 'Created');
         $newapsf=$investment->amountpaidsofar+$investment->return;
         $newtr=$investment->timeremaining-1;
         Investment::where('investmentid', $investment->investmentid)->update([
@@ -261,6 +267,7 @@ class InvestmentController extends Controller
             'timeremaining'=>$newtr,
             'lastpaymentdate'=>$date
         ]);
+        $this->AddLog(json_encode($investment), 'investment', 'PayUpdate');
         return response()->json([
             "message"=>"Investment Payed Successfully",
             "status" => "success",
@@ -302,12 +309,14 @@ class InvestmentController extends Controller
             "bulk_data"=> $bulkdata,
         ]);
         $res=$paymentrequest->json();
-        //print_r($res); exit();
+        print_r($res); exit();
         if (!$res['status']) {
-            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+            $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
         }
         if ($res['status']=='error') {
-            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+            $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
         }
         $transferid=$res['data']['id'];
         BulkPaymentHistory::created([
@@ -337,6 +346,7 @@ class InvestmentController extends Controller
             ]);
             $k++;
         }
+        $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'SuccessPayment');
         return response()->json([
             "message"=>"Investment Payment Dispatched Successfully",
             "status" => "success",
@@ -381,10 +391,12 @@ class InvestmentController extends Controller
         $res=$paymentrequest->json();
         //print_r($res); exit();
         if (!$res['status']) {
-            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+            $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
         }
         if ($res['status']=='error') {
-            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+            $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
         }
         $transferid=$res['data']['id'];
         BulkPaymentHistory::created([
@@ -414,17 +426,19 @@ class InvestmentController extends Controller
             ]);
             $k++;
         }
+        $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'SuccessPayment');
         return response()->json([
             "message"=>"Investment Payment Dispatched Successfully",
             "status" => "success",
         ], 200);
     }
 
-    public function destroy(Investor $investor)
+    public function destroy(Investment $investment)
     {
-        $investor->delete();
+        $this->AddLog(json_encode($investment), 'investment', 'Deleted');
+        $investment->delete();
         $response=[
-            "message" => "Investor Deleted Successfully",
+            "message" => "Investment Deleted Successfully",
             "status" => "success"
         ];
         return response()->json($response, 200);

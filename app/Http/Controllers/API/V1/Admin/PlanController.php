@@ -67,6 +67,7 @@ class PlanController extends Controller
             'category' => $request->category,
             'description' => $request->description,
         ]);
+        $this->AddLog(json_encode($plan), 'plan', 'Created');
 
         $response=[
             "message" => "Plan Created Successfully",
@@ -127,6 +128,7 @@ class PlanController extends Controller
             'category' => $request->category,
             'description' => $request->description,
         ]);
+        $this->AddLog(json_encode($plan), 'plan', 'Updated');
         $response=[
             "message" => "Plan Updated Successfully",
             'plan' => $plan,
@@ -144,6 +146,7 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
+        $this->AddLog(json_encode($plan), 'plan', 'Deleted');
         $plan->delete();
         $response=[
             "message" => "Plan Deleted Successfully",

@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Investor\CreateInvestorRequest;
 use App\Http\Requests\Investor\UpdateInvestorRequest;
 use App\Models\Investor;
+use App\Traits\ActionLogTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class InvestorController extends Controller
 {
+    use ActionLogTrait;
     public function index(Request $request)
     {
         // $result = Investor::with('investments');
@@ -57,6 +59,8 @@ class InvestorController extends Controller
             'address' => $request->address,
             'status' => '0',
         ]);
+        $details=json_encode($investor);
+        $this->AddLog($details, 'investor', 'Created');
         return response()->json([
             "message"=>"Investor Added Successfully",
             "status" => "success",
@@ -88,6 +92,8 @@ class InvestorController extends Controller
             'address' => $request->address,
             'status' => '0',
         ]);
+        $details=json_encode($investor);
+        $this->AddLog($details, 'investor', 'Updated');
         return response()->json([
             "message"=>"Investor Added Successfully",
             "status" => "success",
@@ -97,6 +103,8 @@ class InvestorController extends Controller
 
     public function destroy(Investor $investor)
     {
+        $details=json_encode($investor);
+        $this->AddLog($details, 'investor', 'Deleted');
         $investor->delete();
         $response=[
             "message" => "Investor Deleted Successfully",

@@ -7,12 +7,14 @@ use App\Http\Requests\Account\CreateRequest;
 use App\Http\Requests\Account\UpdateRequest;
 use App\Http\Requests\FetchAccountRequest;
 use App\Models\Account;
+use App\Traits\ActionLogTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class AccountController extends Controller
 {
+    use ActionLogTrait;
     /**
      * Display a listing of the resource.
      *
@@ -122,6 +124,8 @@ class AccountController extends Controller
                 'investor' => $request->investor,
                 'status'=> '1'
             ]);
+
+            $this->AddLog(json_encode($account), 'account', 'Created');
             $response=[
                 "message" => "Account Created Successfully",
                 'account' => $account,
@@ -195,6 +199,7 @@ class AccountController extends Controller
                 'accountname'=> $details['account_name'],
                 'status'=> '1'
             ]);
+            $this->AddLog(json_encode($account), 'account', 'Updated');
             $response=[
                 "message" => "Account Created Successfully",
                 'account' => $account,
@@ -212,6 +217,7 @@ class AccountController extends Controller
      */
     public function destroy(Account $account)
     {
+        $this->AddLog(json_encode($account), 'account', 'Deleted');
         $account->delete();
         $response=[
             "message" => "Account Deleted Successfully",

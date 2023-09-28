@@ -9,6 +9,7 @@ use App\Http\Requests\AdminProfileRequest;
 use App\Http\Resources\API\V1\Admin\AdminResource;
 use App\Http\Resources\API\V1\Admin\AdminSingleResource;
 use App\Models\Admin;
+use App\Traits\ActionLogTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
+    use ActionLogTrait;
 
     public function index(Request $request)
     {
@@ -70,7 +72,7 @@ class AdminController extends Controller
                 'status' => '1',
                 'password' => md5(sha1($request->password)),
             ]);
-
+            $this->AddLog(json_encode($admin), 'admin', 'Created');
             $response=[
                 "message" => "Admin Created Successfully",
                 'admin' => $admin,
@@ -120,6 +122,7 @@ class AdminController extends Controller
                 'role' => '1',
                 'status' => '1',
             ]);
+            $this->AddLog(json_encode($admin), 'admin', 'Updated');
             $response=[
                 "message" => "Admin Updated Successfully",
                 'admin' => $admin,
@@ -162,6 +165,7 @@ class AdminController extends Controller
             $admin->update([
                 'password' => $newpassword,
             ]);
+            $this->AddLog(json_encode($admin), 'admin', 'ChangePassword');
             $response=[
                 "status" => "success",
                 "message" => "Password Changed Successfully",
@@ -175,6 +179,7 @@ class AdminController extends Controller
 
     public function destroy(Admin $admin)
     {
+        $this->AddLog(json_encode($admin), 'admin', 'Deleted');
         $admin->delete();
         $response=[
             "message" => "Admin Deleted Successfully",
@@ -201,6 +206,7 @@ class AdminController extends Controller
             'phone' => $request->phone,
             'email' => $request->email,
         ]);
+        $this->AddLog(json_encode($user), 'admin', 'ChangeProfile');
         return response()->json([
             "status" => "success",
             'user' => $user,

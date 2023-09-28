@@ -32,7 +32,7 @@ class CreateInvestorRequest extends FormRequest
             'lastname' => ['required', 'string'],
             'othername' => ['string'],
             'phonenumber' => ['required', 'string', 'max:300'],
-            'email' => ['email', 'string'],
+            //'email' => ['email', 'string'],
             'address' => ['required', 'string']
         ];
     }

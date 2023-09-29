@@ -65,7 +65,6 @@ Route::prefix('v1')->group(function () {
     });
     Route::post('/admin/auth/login', [AdminAuthController::class, 'login']);
 
-
     Route::get('/fetchbanks', [BankController::class, 'fetchbanks']);
     Route::get('/fetchaccountdetails', [AccountController::class, 'getAccountName']);
     Route::get('/explodebanks', [BankController::class, 'explodebanks']);

@@ -29,7 +29,7 @@ class UpdateInvestmentRequest extends FormRequest
     {
         return [
             'account' => ['required', 'string'],
-            'nextofkin' => ['required', 'string'],
+            //'nextofkin' => ['required', 'string'],
             'plan' => ['required', 'string'],
             'agreementdate' => ['required', 'string'],
             'amountpaid' => ['required', 'string'],

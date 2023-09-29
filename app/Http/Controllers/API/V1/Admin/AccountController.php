@@ -99,10 +99,10 @@ class AccountController extends Controller
      */
     public function store(CreateRequest $request)
     {
-        $accountt=Account::where('accountnumber', $request->accountnumber)->first();
-        if ($accountt) {
-            return response()->json(["message" => "Account Already Exist", "status" => "error"], 400);
-        }
+        // $accountt=Account::where('accountnumber', $request->accountnumber)->first();
+        // if ($accountt) {
+        //     return response()->json(["message" => "Account Already Exist", "status" => "error"], 400);
+        // }
         $acctrequest = Http::withHeaders([
             "content-type" => "application/json",
             "Authorization" => "Bearer ".env('FW_KEY'),
@@ -175,11 +175,11 @@ class AccountController extends Controller
      */
     public function update(UpdateRequest $request, Account $account)
     {
-        $accountt=Account::where('accountnumber', $request->accountnumber)->where('id', '!=', $account->id)->first();
+        // $accountt=Account::where('accountnumber', $request->accountnumber)->where('id', '!=', $account->id)->first();
 
-        if ($accountt) {
-            return response()->json(["message" => "Account Already Exist", "status" => "error"], 400);
-        }
+        // if ($accountt) {
+        //     return response()->json(["message" => "Account Already Exist", "status" => "error"], 400);
+        // }
         $acctrequest = Http::withHeaders([
             "content-type" => "application/json",
             "Authorization" => "Bearer ".env('FW_KEY'),

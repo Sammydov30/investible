@@ -11,7 +11,7 @@ class BankController extends Controller
 {
     public function fetchbanks()
     {
-        $banks=Bank::all();
+        $banks=Bank::orderBY('name', 'ASC')->all();
         return response()->json($banks, 200);
     }
     public function explodebanks()

@@ -25,7 +25,15 @@ class InvestmentController extends Controller
         $result = Investment::with('investmentOwner', 'nok', 'bank');
         if (request()->input("search") != null) {
             $search=request()->input("search");
-            $result->where('investmentid', "like", "%{$search}%");
+            $result->whereHas('investmentOwner', function ($query) use($search)
+            {
+                $query->where('firstname', "like", "%{$search}%")
+                ->orWhere('lastname', "like", "%{$search}%")
+                ->orWhere('othername', "like", "%{$search}%");
+            });
+        }
+        if (request()->input("investmentid")!=null) {
+            $result->where('investmentid', request()->input("investmentid"));
         }
         if (request()->input("investor")!=null) {
             $result->where('investor', request()->input("investor"));

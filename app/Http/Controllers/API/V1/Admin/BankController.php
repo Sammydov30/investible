@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bank;
+use App\Models\Investment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -28,6 +29,19 @@ class BankController extends Controller
                 'bankid' => $bank['id'],
                 'bankcode' => $bank['code'],
                 'name' => $bank['name'],
+            ]);
+        }
+        die("All done");
+    }
+    public function fixinvestments()
+    {
+        $investments=Investment::all();
+        foreach ($investments as $investment) {
+            $t=trim(explode(' ',$investment->timeduration)[0]);
+            $r=trim(str_replace($investment->return, ',', ''));
+            Investment::where('id', $investment->id)->update([
+                'timeduration' => $t,
+                'return' => $r,
             ]);
         }
         die("All done");

@@ -38,7 +38,7 @@ class BankController extends Controller
         $investments=Investment::all();
         foreach ($investments as $investment) {
             $t=trim(explode(' ',$investment->timeduration)[0]);
-            $r=trim(str_replace($investment->return, ',', ''));
+            $r=trim(str_replace(',', '', $investment->return));
             Investment::where('id', $investment->id)->update([
                 'timeduration' => $t,
                 'return' => $r,

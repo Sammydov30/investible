@@ -268,7 +268,7 @@ class InvestmentController extends Controller
             'bankcode'=>$investment->bankcode,
             'amount'=>$investment->return,
             'pdate'=>$date,
-            'narration'=>"Investment Payment for ".$date,
+            'narration'=>"Gavice Weekly Investment Payment for ".$date,
             'status'=>'0'
         ]);
         $this->AddLog(json_encode($payment), 'paymenthistory', 'Created');
@@ -346,7 +346,7 @@ class InvestmentController extends Controller
                 'bankcode'=>$investment->bankcode,
                 'amount'=>$investment->return,
                 'pdate'=>$date,
-                'narration'=>"Investment Payment for ".$date,
+                'narration'=>"Gavice Weekly Investment Payment for ".$date,
                 'status'=>'0'
             ]);
             $newapsf=$investment->amountpaidsofar+$investment->return;

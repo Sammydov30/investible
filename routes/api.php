@@ -48,6 +48,7 @@ Route::prefix('v1')->group(function () {
         Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
         Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
         Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);
+        Route::get('/admin/investments/getweeklypayoutamount', [InvestmentController::class, 'GetPayingAmount']);
         //Payment History
         Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
         //Action Logs

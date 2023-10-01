@@ -498,5 +498,19 @@ class InvestmentController extends Controller
         return $date->format('d-m-Y');
     }
 
+    public function GetPayingAmount(Request $request)
+    {
+        $investments=Investment::where('type', '1')->where('status', '1')->get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->return);
+        }
+        return response()->json([
+            "message"=>"Week Investment Payout Amount Generated Successfully",
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+
 }
 

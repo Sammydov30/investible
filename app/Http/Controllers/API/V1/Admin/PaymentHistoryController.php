@@ -11,6 +11,15 @@ class PaymentHistoryController extends Controller
     public function index(Request $request)
     {
         $result = PaymentHistory::with('investmentOwner', 'investment', 'bank');
+        if (request()->input("search") != null) {
+            $search=request()->input("search");
+            $result->whereHas('investmentOwner', function ($query) use($search)
+            {
+                $query->where('firstname', "like", "%{$search}%")
+                ->orWhere('lastname', "like", "%{$search}%")
+                ->orWhere('othername', "like", "%{$search}%");
+            });
+        }
         if (request()->input("transfercode") != null) {
             $search=request()->input("transfercode");
             $result->where('transfercode', "like", "%{$search}%");

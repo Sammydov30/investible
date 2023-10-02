@@ -535,7 +535,7 @@ class InvestmentController extends Controller
             array_push($bulkdata, $newdata);
             $k++;
         }
-        print_r($bulkdata); exit();
+        //print_r($bulkdata); exit();
 
         /////////////////
         ///Make Payment
@@ -589,6 +589,23 @@ class InvestmentController extends Controller
         return response()->json([
             "message"=>"Investment Payment Dispatched Successfully",
             "status" => "success",
+        ], 200);
+    }
+
+    public function GetRemainingAmount(Request $request)
+    {
+        $investments=Investment::where('type', '1')->where('status', '1')
+        ->where(function($query, $request){
+            $query->whereNull('lastpaymentdate')->where('lastpaymentdate', '!=', $request->date);
+        })->get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->return);
+        }
+        return response()->json([
+            "message"=>"Week Remaining Payout Amount Generated Successfully",
+            "status" => "success",
+            'amount' => $totalamount,
         ], 200);
     }
 

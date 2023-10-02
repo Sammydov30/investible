@@ -50,6 +50,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
         Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);
         Route::get('/admin/investments/getweeklypayoutamount', [InvestmentController::class, 'GetPayingAmount']);
+        Route::get('/admin/investments/getremainingpayoutamount', [InvestmentController::class, 'GetRemainingAmount']);
         //Payment History
         Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
         Route::get('/admin/payments/getweekpayedamount', [PaymentHistoryController::class, 'GetPayedAmount']);

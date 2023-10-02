@@ -272,11 +272,11 @@ class InvestmentController extends Controller
             'status'=>'0'
         ]);
         $this->AddLog(json_encode($payment), 'paymenthistory', 'Created');
-        $newapsf=$investment->amountpaidsofar+$investment->return;
-        $newtr=$investment->timeremaining-1;
+        //$newapsf=$investment->amountpaidsofar+$investment->return;
+        //$newtr=$investment->timeremaining-1;
         Investment::where('investmentid', $investment->investmentid)->update([
-            'amountpaidsofar'=>$newapsf,
-            'timeremaining'=>$newtr,
+            //'amountpaidsofar'=>$newapsf,
+            //'timeremaining'=>$newtr,
             'lastpaymentdate'=>$date
         ]);
         $this->AddLog(json_encode($investment), 'investment', 'PayUpdate');
@@ -349,11 +349,11 @@ class InvestmentController extends Controller
                 'narration'=>"Gavice Weekly Investment Payment for ".$date,
                 'status'=>'0'
             ]);
-            $newapsf=$investment->amountpaidsofar+$investment->return;
-            $newtr=$investment->timeremaining-1;
+            //$newapsf=$investment->amountpaidsofar+$investment->return;
+            //$newtr=$investment->timeremaining-1;
             Investment::where('investmentid', $investment->investmentid)->update([
-                'amountpaidsofar'=>$newapsf,
-                'timeremaining'=>$newtr,
+                //'amountpaidsofar'=>$newapsf,
+                //'timeremaining'=>$newtr,
                 'lastpaymentdate'=>$date
             ]);
             $k++;

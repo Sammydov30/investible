@@ -191,6 +191,7 @@ class InvestmentController extends Controller
             'witnessname' => $request->witnessname,
             'witnessaddress' => $request->witnessaddress,
             'witnessphone' => $request->witnessphone,
+            'status' => $request->status
         ]);
         $this->AddLog(json_encode($investment), 'investment', 'Updated');
         return response()->json([

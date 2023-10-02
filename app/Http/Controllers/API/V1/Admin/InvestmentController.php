@@ -597,7 +597,7 @@ class InvestmentController extends Controller
         $date=$request->date;
         $investments=Investment::where('type', '1')->where('status', '1')
         ->where(function($query) use($date){
-            $query->whereNull('lastpaymentdate')->where('lastpaymentdate', '!=', $date);
+            $query->whereNull('lastpaymentdate')->orWhere('lastpaymentdate', '!=', $date);
         })->get();
         $totalamount=0;
         foreach ($investments as $investment) {

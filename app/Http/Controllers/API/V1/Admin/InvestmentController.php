@@ -246,7 +246,7 @@ class InvestmentController extends Controller
             "account_number"=> $investment->accountnumber,
             "account_bank"=> $investment->bankcode,
             "amount"=> intval($investment->return),
-            "narration"=> "Investment Payment for ".$date,
+            "narration"=> "Gavice Investment Payment for ".$date,
             "currency"=> "NGN",
             "reference"=> $refcode,
             //"callback_url"=> "https://www.flutterwave.com/ng/",
@@ -268,7 +268,7 @@ class InvestmentController extends Controller
             'bankcode'=>$investment->bankcode,
             'amount'=>$investment->return,
             'pdate'=>$date,
-            'narration'=>"Gavice Weekly Investment Payment for ".$date,
+            'narration'=>"Gavice Investment Payment for ".$date,
             'status'=>'0'
         ]);
         $this->AddLog(json_encode($payment), 'paymenthistory', 'Created');

@@ -594,9 +594,10 @@ class InvestmentController extends Controller
 
     public function GetRemainingAmount(Request $request)
     {
+        $date=$request->date;
         $investments=Investment::where('type', '1')->where('status', '1')
-        ->where(function($query, $request){
-            $query->whereNull('lastpaymentdate')->where('lastpaymentdate', '!=', $request->date);
+        ->where(function($query, $date){
+            $query->whereNull('lastpaymentdate')->where('lastpaymentdate', '!=', $date);
         })->get();
         $totalamount=0;
         foreach ($investments as $investment) {

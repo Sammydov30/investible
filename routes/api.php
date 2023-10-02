@@ -43,9 +43,9 @@ Route::prefix('v1')->group(function () {
         Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
         Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);
         Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
-        Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
-        Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
-        Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
+        //Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
+        //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
+        //Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
         Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
         Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
         Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);

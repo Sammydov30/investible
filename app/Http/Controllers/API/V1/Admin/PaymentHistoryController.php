@@ -49,6 +49,20 @@ class PaymentHistoryController extends Controller
         $histories=$result->orderBY($sortBy, $sortOrder)->paginate($perPage);
         return response()->json($histories, 200);
     }
+    public function GetPayedAmount(Request $request)
+    {
+        $date=$request->date;
+        $payments=PaymentHistory::where('pdate', $date)->get();
+        $totalamount=0;
+        foreach ($payments as $payment) {
+            $totalamount=$totalamount+intval($payment->amount);
+        }
+        return response()->json([
+            "message"=>"Total Payment for ".$date,
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
 
 }
 

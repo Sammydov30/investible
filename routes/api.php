@@ -51,6 +51,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/getweeklypayoutamount', [InvestmentController::class, 'GetPayingAmount']);
         //Payment History
         Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
+        Route::get('/admin/payments/getweekpayedamount', [PaymentHistoryController::class, 'GetPayedAmount']);
         //Action Logs
         Route::get('/admin/fetchlogs', [ActionLogController::class, 'index']);
 

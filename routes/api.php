@@ -39,6 +39,7 @@ Route::prefix('v1')->group(function () {
         //Investment
         Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
         Route::post('/admin/investments/update/{investment}', [InvestmentController::class, 'update']);
+        Route::post('/admin/investments/quickupdate/{investment}', [InvestmentController::class, 'sharpupdate']);
         Route::post('/admin/investments/uploadold', [InvestmentController::class, 'uploadold']);
         Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
         Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);

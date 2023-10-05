@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Investment\CreateInvestmentRequest;
+use App\Http\Requests\Investment\SharpUpdateInvestmentRequest;
 use App\Http\Requests\Investment\UpdateInvestmentRequest;
 use App\Http\Requests\Investment\UploadOldInvestmentRequest;
 use App\Models\Account;
@@ -194,6 +195,51 @@ class InvestmentController extends Controller
             'status' => $request->status
         ]);
         $this->AddLog(json_encode($investment), 'investment', 'Updated');
+        return response()->json([
+            "message"=>"Investment Updated Successfully",
+            "status" => "success",
+            'investment' => $investment,
+        ], 200);
+    }
+
+    public function sharpupdate(SharpUpdateInvestmentRequest $request, Investment $investment)
+    {
+        $amount=$investment->return;
+        $startDate = new DateTime($request->startdate);
+        $endDate = new DateTime($request->stopdate);
+        $difference = $endDate->diff($startDate);
+        $totalweeks=($difference->format("%a"))/7;
+        //echo $totalweeks; exit();
+        if ($totalweeks>=($request->no_of-1)) {
+            $status="2";
+        }else{
+            $status="1";
+        }
+        $date = new DateTime();
+        $date->modify('last monday');
+        $lastmonday = $date->format('d-m-Y');
+        $startDate = new DateTime($request->startdate);
+        $endDate = new DateTime($lastmonday);
+        $difference = $endDate->diff($startDate);
+        $totalweekspaid=($difference->format("%a"))/7;
+        //Time remaining
+        $timeremaining=$request->no_of-$totalweekspaid;
+        //Amount Paid so far
+        $amountpaidsofar=$amount*$totalweekspaid;
+        //agreement date
+        $date = new DateTime($request->startdate);
+        $date->modify('- 10 days');
+        $agreementdate=$date->format('d-m-Y');
+        $investment->update([
+            'agreementdate' => $agreementdate,
+            'amountpaidsofar'=>$amountpaidsofar,
+            'timeduration'=>$request->no_of,
+            'timeremaining'=>$timeremaining,
+            'startdate'=>$request->startdate,
+            'stopdate'=>$request->stopdate,
+            'status' => $status
+        ]);
+        $this->AddLog(json_encode($investment), 'investment', 'Sharp Updated');
         return response()->json([
             "message"=>"Investment Updated Successfully",
             "status" => "success",
@@ -491,6 +537,7 @@ class InvestmentController extends Controller
     }
     public function GetStopDate($sdate, $no_of, $duration){
         $date = new DateTime($sdate);
+        $no_of=$no_of-1;
         if ($duration=='1') {
             $date->modify("+ $no_of weeks");
         } else {

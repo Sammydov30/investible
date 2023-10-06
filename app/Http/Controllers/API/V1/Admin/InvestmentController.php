@@ -253,6 +253,7 @@ class InvestmentController extends Controller
         $date = new DateTime($currdate);
         $date->modify('next day');
         $date=$date->format('Y-m-d');
+        echo $date; exit();
         $investments=Investment::where('status', '0')->get();
         foreach ($investments as $investment) {
             $invdate=date('Y-m-d', strtotime($investment->startdate));

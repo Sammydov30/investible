@@ -80,7 +80,7 @@ class DashboardController extends Controller
     }
     public function recentinvestors()
     {
-        $investors = Investment::orderBY('id', 'desc')
+        $investors = Investor::orderBY('id', 'desc')
         ->limit(10)
         ->get();
         return response()->json($investors, 200);

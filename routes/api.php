@@ -4,13 +4,13 @@ use App\Http\Controllers\API\V1\Admin\AccountController;
 use App\Http\Controllers\API\V1\Admin\ActionLogController;
 use App\Http\Controllers\API\V1\Admin\AdminController;
 use App\Http\Controllers\API\V1\Admin\BankController;
+use App\Http\Controllers\API\V1\Admin\DashboardController;
 use App\Http\Controllers\API\V1\Admin\InvestmentController;
 use App\Http\Controllers\API\V1\Admin\InvestorController;
 use App\Http\Controllers\API\V1\Admin\NextOfKinController;
 use App\Http\Controllers\API\V1\Admin\PaymentHistoryController;
 use App\Http\Controllers\API\V1\Admin\PlanController;
 use App\Http\Controllers\API\V1\Auth\AdminAuthController;
-use App\Models\Investment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +27,14 @@ Route::prefix('v1')->group(function () {
         Route::post('/admin/changepassword', [AdminController::class, 'changepassword']);
 
         //dashboard
+        Route::get('/admin/dashboard/totalinvestors', [DashboardController::class, 'allInvestors']);
+        Route::get('/admin/dashboard/totalinvestments', [DashboardController::class, 'allInvestments']);
+        Route::get('/admin/dashboard/payableamount', [DashboardController::class, 'GetPayingAmount']);
+        Route::get('/admin/dashboard/totalongoinginvestment', [DashboardController::class, 'OngoingInvestments']);
+        Route::get('/admin/dashboard/collectedamount', [DashboardController::class, 'GetCollectedAmount']);
+        Route::get('/admin/dashboard/returnsamount', [DashboardController::class, 'GetReturnsAmount']);
+        Route::get('/admin/dashboard/recentinvestments', [DashboardController::class, 'recentinvestments']);
+        Route::get('/admin/dashboard/recentinvestors', [DashboardController::class, 'recentinvestors']);
 
         //Investors
         Route::apiResource('/admin/investors', InvestorController::class);

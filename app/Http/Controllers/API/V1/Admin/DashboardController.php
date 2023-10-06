@@ -5,8 +5,6 @@ namespace App\Http\Controllers\API\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Investment;
 use App\Models\Investor;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
 {
@@ -42,7 +40,6 @@ class DashboardController extends Controller
             $totalamount=$totalamount+intval($investment->return);
         }
         return response()->json([
-            "message"=>"Week Investment Payout Amount Generated Successfully",
             "status" => "success",
             'amount' => $totalamount,
         ], 200);

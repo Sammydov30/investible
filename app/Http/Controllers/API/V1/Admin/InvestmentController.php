@@ -210,7 +210,7 @@ class InvestmentController extends Controller
         $difference = $endDate->diff($startDate);
         $totalweeks=($difference->format("%a"))/7;
         //echo $totalweeks; exit();
-        if ($totalweeks>=($request->no_of-1)) {
+        if ($totalweeks>=($request->no_of)) {
             $status="2";
         }else{
             $status="1";
@@ -537,7 +537,7 @@ class InvestmentController extends Controller
     }
     public function GetStopDate($sdate, $no_of, $duration){
         $date = new DateTime($sdate);
-        $no_of=$no_of-1;
+        //$no_of=$no_of-1;
         if ($duration=='1') {
             $date->modify("+ $no_of weeks");
         } else {

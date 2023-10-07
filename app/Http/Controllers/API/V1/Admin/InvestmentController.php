@@ -204,8 +204,8 @@ class InvestmentController extends Controller
 
     public function sharpupdate(SharpUpdateInvestmentRequest $request, Investment $investment)
     {
-        $currdate=date('d-m-Y');
-        $eDate = date("d-m-Y", strtotime($request->stopdate));
+        $currdate=new DateTime();
+        $eDate = new DateTime($request->stopdate);
         $amount=$investment->return;
         $startDate = new DateTime($request->startdate);
         $endDate = new DateTime($request->stopdate);

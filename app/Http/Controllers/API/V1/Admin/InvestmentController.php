@@ -86,7 +86,7 @@ class InvestmentController extends Controller
         $bankcode=$accountinfo->bankcode;
         $planinfo=Plan::where('id', $request->plan)->first();
         $type=($planinfo->duration=='1')?'1':'2';
-        $amountpaid=$planinfo->amount;
+        $amountpaid=$planinfo->amount*$request->howmany;
         $amounttobereturned=(($planinfo->percentage/100)*$amountpaid)+$amountpaid;
         $percentage=$planinfo->percentage;
         $return=$planinfo->returns*$request->howmany;

@@ -205,9 +205,9 @@ class InvestmentController extends Controller
     public function sharpupdate(SharpUpdateInvestmentRequest $request, Investment $investment)
     {
         if (empty($request->stopdate)) {
-            $date = new DateTime($request->startdate);
-            $date->modify("+ $request->no_of weeks");
-            $stopdate = $date->format('d-m-Y');
+            $date2 = new DateTime($request->startdate);
+            $date2->modify("+ $request->no_of weeks");
+            $stopdate = $date2->format('d-m-Y');
         }else{
             $stopdate = $request->stopdate;
         }

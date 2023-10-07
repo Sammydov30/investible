@@ -211,8 +211,12 @@ class InvestmentController extends Controller
         $difference = $endDate->diff($startDate);
         $totalweeks=($difference->format("%a"))/7;
         //echo $totalweeks; exit();
-        if (($totalweeks>=($request->no_of)) && $currdate>$endDate) {
-            $status="2";
+        if ($currdate<$endDate) {
+            if ($totalweeks>=$request->no_of) {
+                $status="2";
+            }else{
+                $status="1";
+            }
         }else{
             $status="1";
         }

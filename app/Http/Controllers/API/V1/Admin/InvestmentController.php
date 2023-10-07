@@ -204,11 +204,18 @@ class InvestmentController extends Controller
 
     public function sharpupdate(SharpUpdateInvestmentRequest $request, Investment $investment)
     {
+        if (empty($request->stopdate)) {
+            $date = new DateTime($request->startdate);
+            $date->modify("+ $request->no_of weeks");
+            $stopdate = $date->format('d-m-Y');
+        }else{
+            $stopdate = $request->stopdate;
+        }
         $currdate=new DateTime();
-        $eDate = new DateTime($request->stopdate);
+        $eDate = new DateTime($stopdate);
         $amount=$investment->return;
         $startDate = new DateTime($request->startdate);
-        $endDate = new DateTime($request->stopdate);
+        $endDate = new DateTime($stopdate);
         $difference = $endDate->diff($startDate);
         $totalweeks=($difference->format("%a"))/7;
         //echo $totalweeks; exit();
@@ -243,7 +250,7 @@ class InvestmentController extends Controller
             'timeduration'=>$request->no_of,
             'timeremaining'=>$timeremaining,
             'startdate'=>$request->startdate,
-            'stopdate'=>$request->stopdate,
+            'stopdate'=>$stopdate,
             'status' => $status
         ]);
         $this->AddLog(json_encode($investment), 'investment', 'Sharp Updated');

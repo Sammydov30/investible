@@ -40,7 +40,7 @@ class SharpUpdateInvestmentRequest extends FormRequest
             'no_of' => ['required', 'string'],
             //'timeremaining' => ['required', 'string'],
             'startdate' => ['required', 'string'],
-            'stopdate' => ['required', 'string'],
+            //'stopdate' => ['required', 'string'],
             //'duration' => ['required', 'string'],
             //'witnessname' => ['required', 'string'],
             //'witnessaddress' => ['required', 'string'],

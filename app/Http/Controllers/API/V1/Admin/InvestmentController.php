@@ -218,7 +218,7 @@ class InvestmentController extends Controller
                 $status="1";
             }
         }else{
-            $status="1";
+            $status="2";
         }
         $date = new DateTime();
         $date->modify('last monday');

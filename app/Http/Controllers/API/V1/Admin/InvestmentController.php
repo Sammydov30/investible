@@ -206,7 +206,8 @@ class InvestmentController extends Controller
     {
         if (empty($request->stopdate)) {
             $date2 = new DateTime($request->startdate);
-            $date2->modify("+ $request->no_of weeks");
+            $no_of=$request->no_of-1;
+            $date2->modify("+ $no_of weeks");
             $stopdate = $date2->format('d-m-Y');
         }else{
             $stopdate = $request->stopdate;

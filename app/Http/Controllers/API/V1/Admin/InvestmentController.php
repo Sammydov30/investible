@@ -204,13 +204,14 @@ class InvestmentController extends Controller
 
     public function sharpupdate(SharpUpdateInvestmentRequest $request, Investment $investment)
     {
+        $currdate=new DateTime();
         $amount=$investment->return;
         $startDate = new DateTime($request->startdate);
         $endDate = new DateTime($request->stopdate);
         $difference = $endDate->diff($startDate);
         $totalweeks=($difference->format("%a"))/7;
         //echo $totalweeks; exit();
-        if ($totalweeks>=($request->no_of)) {
+        if (($totalweeks>=($request->no_of)) && $currdate>$endDate) {
             $status="2";
         }else{
             $status="1";

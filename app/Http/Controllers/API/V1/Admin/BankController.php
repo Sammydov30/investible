@@ -59,5 +59,16 @@ class BankController extends Controller
         }
         die("All done");
     }
+    public function fixinvestments3()
+    {
+        Investment::where('status', '1')
+        ->where(function($query){
+            $query->whereNull('timeremaining')->orWhereNull('amountpaidsofar');
+        })->update([
+            'timeremaining'=>'49',
+            'amountpaidsofar'=>'0'
+        ]);
+        die("All done");
+    }
 
 }

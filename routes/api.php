@@ -87,5 +87,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/fetchaccountdetails', [AccountController::class, 'getAccountName']);
     Route::get('/explodebanks', [BankController::class, 'explodebanks']);
     Route::get('/fixinvestments', [BankController::class, 'fixinvestments']);
+    Route::get('/fixinvestments3', [BankController::class, 'fixinvestments3']);
 
 });

@@ -244,7 +244,7 @@ class InvestmentController extends Controller
         $endDate = new DateTime($lastmonday);
 
         $difference = $endDate->diff($startDate);
-        $totalweekspaid=($difference->format("%a"))/7;
+        $totalweekspaid=(($difference->format("%a"))/7)+1;
         //Time remaining
         $timeremaining=$request->no_of-$totalweekspaid;
         //Amount Paid so far

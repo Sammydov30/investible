@@ -230,11 +230,12 @@ class InvestmentController extends Controller
         }else{
             $status="2";
         }
-        $date = new DateTime();
-        $date->modify('last monday');
-        $lastmonday = $date->format('d-m-Y');
-        $startDate = new DateTime($request->startdate);
-        $endDate = new DateTime($lastmonday);
+        // $date = new DateTime();
+        // $date->modify('last monday');
+        // $lastmonday = $date->format('d-m-Y');
+        // $startDate = new DateTime($request->startdate);
+        // $endDate = new DateTime($lastmonday);
+
         $difference = $endDate->diff($startDate);
         $totalweekspaid=($difference->format("%a"))/7;
         //Time remaining

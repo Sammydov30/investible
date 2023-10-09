@@ -230,11 +230,18 @@ class InvestmentController extends Controller
         }else{
             $status="2";
         }
-        // $date = new DateTime();
-        // $date->modify('last monday');
-        // $lastmonday = $date->format('d-m-Y');
-        // $startDate = new DateTime($request->startdate);
-        // $endDate = new DateTime($lastmonday);
+
+        $currdate=date('d-m-Y');
+        if (date('l', strtotime($currdate))=='Monday') {
+            $lastmonday=$currdate;
+        } else {
+            $date = new DateTime();
+            $date->modify('last monday');
+            $lastmonday = $date->format('d-m-Y');
+        }
+
+        $startDate = new DateTime($request->startdate);
+        $endDate = new DateTime($lastmonday);
 
         $difference = $endDate->diff($startDate);
         $totalweekspaid=($difference->format("%a"))/7;

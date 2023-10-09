@@ -70,5 +70,15 @@ class BankController extends Controller
         ]);
         die("All done");
     }
+    public function fixinvestments4(Request $request)
+    {
+        $date1=$request->date1;
+        $date2=$request->date2;
+        $date3=$request->date3;
+        Investment::where('startdate', $date1)->orWhere('startdate', $date2)->update([
+            'stopdate'=>$date3,
+        ]);
+        die("All done");
+    }
 
 }

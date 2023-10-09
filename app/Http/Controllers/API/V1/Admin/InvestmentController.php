@@ -371,7 +371,7 @@ class InvestmentController extends Controller
                 "bank_code"=> $investment->bankcode,
                 "account_number"=> $investment->accountnumber,
                 "amount"=> intval($investment->return),
-                "narration"=> "Investment Payment for ".$date,
+                "narration"=> "Gavice Investment Payment for ".$date,
                 "currency"=> "NGN",
                 "reference"=> $refcode.$k
             ];

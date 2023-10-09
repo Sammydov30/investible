@@ -265,9 +265,13 @@ class InvestmentController extends Controller
     public function updateReady()
     {
         $currdate=date('Y-m-d');
-        $date = new DateTime($currdate);
-        $date->modify('next monday');
-        $date=$date->format('Y-m-d');
+        if (date('l', strtotime($currdate))=='Monday') {
+            $date=$currdate;
+        } else {
+            $date = new DateTime($currdate);
+            $date->modify('next monday');
+            $date=$date->format('Y-m-d');
+        }
         //echo $date; exit();
         $investments=Investment::where('status', '0')->get();
         foreach ($investments as $investment) {
@@ -594,7 +598,7 @@ class InvestmentController extends Controller
                 "bank_code"=> $investment->bankcode,
                 "account_number"=> $investment->accountnumber,
                 "amount"=> intval($investment->return),
-                "narration"=> "Investment Payment for ".$date,
+                "narration"=> "Gavice Investment Payment for ".$date,
                 "currency"=> "NGN",
                 "reference"=> $refcode.$k
             ];

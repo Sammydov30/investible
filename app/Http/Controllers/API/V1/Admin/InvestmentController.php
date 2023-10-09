@@ -568,7 +568,7 @@ class InvestmentController extends Controller
     }
     public function GetStopDate($sdate, $no_of, $duration){
         $date = new DateTime($sdate);
-        //$no_of=$no_of-1;
+        $no_of=$no_of-1;
         if ($duration=='1') {
             $date->modify("+ $no_of weeks");
         } else {

@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Plan\CreatePlanRequest;
 use App\Http\Requests\Plan\UpdatePlanRequest;
 use App\Models\Plan;
+use App\Traits\ActionLogTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PlanController extends Controller
 {
+    use ActionLogTrait;
     public function index()
     {
         $result = DB::table('plans');

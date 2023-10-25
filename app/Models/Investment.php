@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use function PHPUnit\Framework\isNull;
+
 class Investment extends Model
 {
     use HasFactory;
@@ -50,4 +52,13 @@ class Investment extends Model
     {
         return $this->hasOne(Bank::class, 'bankcode', 'bankcode');
     }
+
+    // public function toArray()
+    // {
+    //     $array = parent::toArray();
+    //     $url = env('APP_UURL');
+    //     $array['pop'] =(isNull($this->pop))? "https://res.cloudinary.com/examqueat/image/upload/v1664654734/handshake.jpg" :
+    //     $url.$this->pop;
+    //     return $array;
+    // }
 }

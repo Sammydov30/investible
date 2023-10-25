@@ -37,6 +37,8 @@ class CreateInvestmentRequest extends FormRequest
             'witnessname' => ['required', 'string'],
             'witnessaddress' => ['required', 'string'],
             'witnessphone' => ['required', 'string'],
+            'pop' => 'nullable|mimes:jpg,png,jpeg,pdf,doc,docx',
+            'agreementdoc' => 'nullable|mimes:pdf,doc,docx',
 
         ];
     }

@@ -45,7 +45,10 @@ class UpdateInvestmentRequest extends FormRequest
             //'witnessname' => ['required', 'string'],
             //'witnessaddress' => ['required', 'string'],
             //'witnessphone' => ['required', 'string'],
-            'status' => ['required']
+            'status' => ['required'],
+            // 'pop' => 'nullable|mimes:jpg,png,jpeg,pdf,doc,docx|max:2048',
+            'pop' => 'nullable|mimes:jpg,png,jpeg,pdf,doc,docx',
+            'agreementdoc' => 'nullable|mimes:pdf,doc,docx',
         ];
     }
 

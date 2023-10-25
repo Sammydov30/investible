@@ -33,6 +33,8 @@ class Investment extends Model
         'witnessaddress',
         'witnessphone',
         'lastpaymentdate',
+        'pop',
+        'agreementdoc',
         'status'
     ];
 

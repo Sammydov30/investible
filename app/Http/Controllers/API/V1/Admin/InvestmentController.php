@@ -18,6 +18,8 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
+use function PHPUnit\Framework\isNull;
+
 class InvestmentController extends Controller
 {
     use ActionLogTrait;
@@ -80,7 +82,6 @@ class InvestmentController extends Controller
 
     public function store(CreateInvestmentRequest $request)
     {
-
         $accountinfo=Account::where('id', $request->account)->first();
         $accountnumber=$accountinfo->accountnumber;
         $bankcode=$accountinfo->bankcode;
@@ -95,6 +96,27 @@ class InvestmentController extends Controller
         $timeremaining=$timeduration;
         $startdate=$this->GetStartDate($request->agreementdate, $type);
         $stopdate=$this->GetStopDate($startdate, $timeduration, $type);
+
+        if ($request->file('pop')) {
+            $file =$request->file('pop');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.' . $extension;
+            $file->move(public_path('uploads/pop/'), $filename);
+            $pop= 'uploads/pop/'.$filename;
+        }else{
+            $pop=null;
+        }
+
+        if ($request->file('agreementdoc')) {
+            $file =$request->file('agreementdoc');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.' . $extension;
+            $file->move(public_path('uploads/agreementdoc/'), $filename);
+            $agreementdoc= 'uploads/agreementdoc/'.$filename;
+        }else{
+            $agreementdoc=null;
+        }
+
         $investment=Investment::create([
             'investmentid' => $this->getInvestmentNO(),
             'investor'=>$request->investor,
@@ -118,6 +140,8 @@ class InvestmentController extends Controller
             'witnessname' => $request->witnessname,
             'witnessaddress' => $request->witnessaddress,
             'witnessphone' => $request->witnessphone,
+            'pop'=>$pop,
+            'agreementdoc'=>$agreementdoc,
             'status' => '0',
         ]);
         $this->AddLog(json_encode($investment), 'investment', 'Created');
@@ -133,6 +157,27 @@ class InvestmentController extends Controller
         $accountinfo=Account::where('id', $request->account)->first();
         $accountnumber=$accountinfo->accountnumber;
         $bankcode=$accountinfo->bankcode;
+
+        if ($request->file('pop')) {
+            $file =$request->file('pop');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.' . $extension;
+            $file->move(public_path('uploads/pop/'), $filename);
+            $pop= 'uploads/pop/'.$filename;
+        }else{
+            $pop=null;
+        }
+
+        if ($request->file('agreementdoc')) {
+            $file =$request->file('agreementdoc');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.' . $extension;
+            $file->move(public_path('uploads/agreementdoc/'), $filename);
+            $agreementdoc= 'uploads/agreementdoc/'.$filename;
+        }else{
+            $agreementdoc=null;
+        }
+
         $investment=Investment::create([
             'investmentid' => $this->getInvestmentNO(),
             'investor'=>$request->investor,
@@ -156,6 +201,8 @@ class InvestmentController extends Controller
             'witnessname' => $request->witnessname,
             'witnessaddress' => $request->witnessaddress,
             'witnessphone' => $request->witnessphone,
+            'pop'=>$pop,
+            'agreementdoc'=>$agreementdoc,
             'status' => $request->status,
         ]);
         $this->AddLog(json_encode($investment), 'investment', 'Upload');
@@ -171,6 +218,27 @@ class InvestmentController extends Controller
         $accountinfo=Account::where('id', $request->account)->first();
         $accountnumber=$accountinfo->accountnumber;
         $bankcode=$accountinfo->bankcode;
+
+        if ($request->file('pop')) {
+            $file =$request->file('pop');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.' . $extension;
+            $file->move(public_path('uploads/pop/'), $filename);
+            $pop= 'uploads/pop/'.$filename;
+        }else{
+            $pop=null;
+        }
+
+        if ($request->file('agreementdoc')) {
+            $file =$request->file('agreementdoc');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.' . $extension;
+            $file->move(public_path('uploads/agreementdoc/'), $filename);
+            $agreementdoc= 'uploads/agreementdoc/'.$filename;
+        }else{
+            $agreementdoc=null;
+        }
+
         $investment->update([
             'account' => $request->account,
             'accountnumber'=> $accountnumber,
@@ -192,8 +260,18 @@ class InvestmentController extends Controller
             'witnessname' => $request->witnessname,
             'witnessaddress' => $request->witnessaddress,
             'witnessphone' => $request->witnessphone,
-            'status' => $request->status
+            'status' => $request->status,
         ]);
+        if ($request->file('pop')) {
+            $investment->update([
+                'pop'=>$pop,
+            ]);
+        }
+        if ($request->file('agreementdoc')) {
+            $investment->update([
+                'agreementdoc'=>$agreementdoc,
+            ]);
+        }
         $this->AddLog(json_encode($investment), 'investment', 'Updated');
         return response()->json([
             "message"=>"Investment Updated Successfully",

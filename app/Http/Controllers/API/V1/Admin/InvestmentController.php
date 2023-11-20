@@ -86,7 +86,7 @@ class InvestmentController extends Controller
         if (!empty(request()->input("perpage"))) {
             $perPage=request()->input("perpage");
         } else {
-            $perPage=100;
+            $perPage=5000;
         }
 
         $investments=$result->orderBY($sortBy, $sortOrder)->paginate($perPage);

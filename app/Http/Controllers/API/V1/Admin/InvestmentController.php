@@ -67,6 +67,32 @@ class InvestmentController extends Controller
         return response()->json($investments, 200);
     }
 
+    public function exportable(Request $request)
+    {
+        $result = Investment::with('investmentOwner')->whereIn('status', ['0', '1']);
+        if (request()->input("type")!=null) {
+            $result->where('type', request()->input("type"));
+        }
+        if ((request()->input("sortBy")!=null) && in_array(request()->input("sortBy"), ['id', 'created_at'])) {
+            $sortBy=request()->input("sortBy");
+        }else{
+            $sortBy='id';
+        }
+        if ((request()->input("sortorder")!=null) && in_array(request()->input("sortorder"), ['asc', 'desc'])) {
+            $sortOrder=request()->input("sortorder");
+        }else{
+            $sortOrder='desc';
+        }
+        if (!empty(request()->input("perpage"))) {
+            $perPage=request()->input("perpage");
+        } else {
+            $perPage=100;
+        }
+
+        $investments=$result->orderBY($sortBy, $sortOrder)->paginate($perPage);
+        return response()->json($investments, 200);
+    }
+
     public function show($investment)
     {
         $investment=Investment::find($investment);
@@ -377,7 +403,66 @@ class InvestmentController extends Controller
             "status" => "success",
         ], 200);
     }
-
+    public function justpayInvestment(Request $request)
+    {
+        if (empty($request->investmentid)) {
+            return response()->json(["message"=>"Investment Id is required", "status"=>"error"], 400);
+        }
+        $investment=Investment::where('investmentid', $request->investmentid)->first();
+        if (!$investment) {
+            return response()->json(["message"=>"This record doesn't exist", "status"=>"error"], 400);
+        }
+        if ($investment->status=='0') {
+            return response()->json(["message"=>"This Investment is not due for payment yet", "status"=>"error"], 400);
+        }
+        if ($investment->status=='2') {
+            return response()->json(["message"=>"This Investment's payment is over", "status"=>"error"], 400);
+        }
+        $refcode="IP".time();
+        $date=date("d-m-Y");
+        $paymentrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/transfers', [
+            "account_number"=> $investment->accountnumber,
+            "account_bank"=> $investment->bankcode,
+            "amount"=> intval($investment->return),
+            "narration"=> "Gavice Investment Payment for ".$date,
+            "currency"=> "NGN",
+            "reference"=> $refcode,
+            //"callback_url"=> "https://www.flutterwave.com/ng/",
+            "debit_currency"=> "NGN"
+        ]);
+        $res=$paymentrequest->json();
+        //print_r($res); exit();
+        if (!$res['status']) {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        $payment=PaymentHistory::create([
+            'transfercode'=>$refcode,
+            'investmentid'=>$investment->investmentid,
+            'investorid'=>$investment->investor,
+            'accountnumber'=>$investment->accountnumber,
+            'bankcode'=>$investment->bankcode,
+            'amount'=>$investment->return,
+            'pdate'=>$date,
+            'narration'=>"Gavice Investment Payment for ".$date,
+            'status'=>'0'
+        ]);
+        $this->AddLog(json_encode($payment), 'paymenthistory', 'Created');
+        Investment::where('investmentid', $investment->investmentid)->update([
+            'lastpaymentdate'=>$date
+        ]);
+        $this->AddLog(json_encode($investment), 'investment', 'PayUpdate');
+        return response()->json([
+            "message"=>"Investment Payed Successfully",
+            "status" => "success",
+            'payment' => $payment,
+        ], 200);
+    }
     public function payInvestment(Request $request)
     {
         if (empty($request->investmentid)) {

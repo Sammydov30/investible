@@ -77,7 +77,7 @@ Route::prefix('v1')->group(function () {
 
             Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
             Route::post('/admin/investments/justpayinvestment', [InvestmentController::class, 'justpayInvestment']);
-            Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
+            //Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
             //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
             //Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
         });

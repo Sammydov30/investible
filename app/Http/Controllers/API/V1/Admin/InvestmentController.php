@@ -686,6 +686,29 @@ class InvestmentController extends Controller
         ], 200);
     }
 
+    public function retrypayment(Request $request)
+    {
+        if (empty($request->paymentid)) {
+            return response()->json(["message"=>"Payment Id is required", "status"=>"error"], 400);
+        }
+        $paymentrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/transfers/'.$request->paymentid.'/retries');
+        $res=$paymentrequest->json();
+        print_r($res); exit();
+        if (!$res['status']) {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
+            return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
+        }
+        return response()->json([
+            "message"=>"Investment Payed Successfully",
+            "status" => "success",
+        ], 200);
+    }
+
     public function destroy(Investment $investment)
     {
         $this->AddLog(json_encode($investment), 'investment', 'Deleted');

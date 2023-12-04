@@ -694,7 +694,7 @@ class InvestmentController extends Controller
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
             "Authorization" => "Bearer ".env('FW_KEY'),
-        ])->post('https://api.flutterwave.com/v3/transfers/IP1701660728525/retries');
+        ])->post('https://api.flutterwave.com/v3/transfers/'.$request->paymentid.'/retries');
         $res=$paymentrequest->json();
         print_r($res); exit();
         if (!$res['status']) {

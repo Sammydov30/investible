@@ -501,26 +501,26 @@ class InvestmentController extends Controller
         if ($res['status']=='error') {
             return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
         }
-        $payment=PaymentHistory::create([
-            'transfercode'=>$refcode,
-            'investmentid'=>$investment->investmentid,
-            'investorid'=>$investment->investor,
-            'accountnumber'=>$investment->accountnumber,
-            'bankcode'=>$investment->bankcode,
-            'amount'=>$investment->return,
-            'pdate'=>$date,
-            'narration'=>"Gavice Investment Payment for ".$date,
-            'status'=>'0'
-        ]);
-        $this->AddLog(json_encode($payment), 'paymenthistory', 'Created');
-        $newapsf=$investment->amountpaidsofar+$investment->return;
-        $newtr=$investment->timeremaining-1;
-        Investment::where('investmentid', $investment->investmentid)->update([
-            'amountpaidsofar'=>$newapsf,
-            'timeremaining'=>$newtr,
-            'lastpaymentdate'=>$date
-        ]);
-        $this->AddLog(json_encode($investment), 'investment', 'PayUpdate');
+        // $payment=PaymentHistory::create([
+        //     'transfercode'=>$refcode,
+        //     'investmentid'=>$investment->investmentid,
+        //     'investorid'=>$investment->investor,
+        //     'accountnumber'=>$investment->accountnumber,
+        //     'bankcode'=>$investment->bankcode,
+        //     'amount'=>$investment->return,
+        //     'pdate'=>$date,
+        //     'narration'=>"Gavice Investment Payment for ".$date,
+        //     'status'=>'0'
+        // ]);
+        // $this->AddLog(json_encode($payment), 'paymenthistory', 'Created');
+        // $newapsf=$investment->amountpaidsofar+$investment->return;
+        // $newtr=$investment->timeremaining-1;
+        // Investment::where('investmentid', $investment->investmentid)->update([
+        //     'amountpaidsofar'=>$newapsf,
+        //     'timeremaining'=>$newtr,
+        //     'lastpaymentdate'=>$date
+        // ]);
+        // $this->AddLog(json_encode($investment), 'investment', 'PayUpdate');
         return response()->json([
             "message"=>"Investment Payed Successfully",
             "status" => "success",

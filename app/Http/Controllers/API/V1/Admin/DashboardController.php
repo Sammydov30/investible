@@ -69,6 +69,32 @@ class DashboardController extends Controller
         ], 200);
     }
 
+    public function GetPayedOutAmount()
+    {
+        $investments=Investment::get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->amountpaidsofar);
+        }
+        return response()->json([
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+
+    public function GetDebtAmount()
+    {
+        $investments=Investment::get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+(intval($investment->amount_to_be_returned)-intval($investment->amountpaidsofar));
+        }
+        return response()->json([
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+
     public function recentinvestments()
     {
         $investments = Investment::with('investmentOwner', 'nok', 'bank')

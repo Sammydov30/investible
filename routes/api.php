@@ -33,6 +33,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/dashboard/totalongoinginvestment', [DashboardController::class, 'OngoingInvestments']);
         Route::get('/admin/dashboard/collectedamount', [DashboardController::class, 'GetCollectedAmount']);
         Route::get('/admin/dashboard/returningamount', [DashboardController::class, 'GetReturnsAmount']);
+        Route::get('/admin/dashboard/paidoutamount', [DashboardController::class, 'GetPayedOutAmount']);
+        Route::get('/admin/dashboard/debtamount', [DashboardController::class, 'GetDebtAmount']);
         Route::get('/admin/dashboard/recentinvestments', [DashboardController::class, 'recentinvestments']);
         Route::get('/admin/dashboard/recentinvestors', [DashboardController::class, 'recentinvestors']);
 

@@ -394,6 +394,65 @@ class InvestmentController extends Controller
                 ]);
             }
         }
+
+
+
+        //close investments
+        $investments=Investment::where('status', '1')->get();
+        foreach ($investments as $investment) {
+            //$invdate=date('Y-m-d', strtotime($investment->startdate));
+            //$stopdate = $investment->stopdate;
+            $date2 = new DateTime($investment->startdate);
+            $no_of=$investment->timeduration-1;
+            $date2->modify("+ $no_of weeks");
+            $stopdate = $date2->format('d-m-Y');
+
+            $currdate=new DateTime();
+            $eDate = new DateTime($stopdate);
+            $amount=$investment->return;
+            $startDate = new DateTime($investment->startdate);
+            $endDate = new DateTime($stopdate);
+            $difference = $endDate->diff($startDate);
+            $totalweeks=($difference->format("%a"))/7;
+
+            if ($currdate<$eDate) {
+                $status="1";
+            }else{
+                $status="2";
+            }
+            $currdate=date('d-m-Y');
+            if (date('l', strtotime($currdate))=='Monday') {
+                $lastmonday=$currdate;
+            } else {
+                $date = new DateTime();
+                $date->modify('last monday');
+                $lastmonday = $date->format('d-m-Y');
+            }
+
+            $startDate = new DateTime($investment->startdate);
+            $endDate = new DateTime($lastmonday);
+
+            $difference = $endDate->diff($startDate);
+            $totalweekspaid=(($difference->format("%a"))/7)+1;
+            //Time remaining
+            $timeremaining=$no_of-$totalweekspaid;
+            //Amount Paid so far
+            $amountpaidsofar=$amount*$totalweekspaid;
+            //agreement date
+            $date = new DateTime($investment->startdate);
+            $date->modify('- 10 days');
+            $agreementdate=$date->format('d-m-Y');
+            Investment::where('id', $investment->id)->update([
+                'agreementdate' => $agreementdate,
+                'amountpaidsofar'=>$amountpaidsofar,
+                'timeremaining'=>$timeremaining,
+                'stopdate'=>$stopdate,
+                'status' => $status
+            ]);
+        }
+
+
+
         Investment::where('timeremaining', '0')->update([
             'status' => '2',
         ]);

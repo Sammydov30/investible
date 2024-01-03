@@ -384,6 +384,7 @@ class InvestmentController extends Controller
             $date->modify('next monday');
             $date=$date->format('Y-m-d');
         }
+        $ddd=$date;
         //echo $date; exit();
         $investments=Investment::where('status', '0')->get();
         foreach ($investments as $investment) {
@@ -456,7 +457,7 @@ class InvestmentController extends Controller
         Investment::where('timeremaining', '0')->update([
             'status' => '2',
         ]);
-        $this->AddLog('Got investment ready for '.$date, 'investment', 'GotReady');
+        $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');
         return response()->json([
             "message"=>"Investments are ready for period payment Successfully",
             "status" => "success",

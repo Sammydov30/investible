@@ -444,7 +444,7 @@ class InvestmentController extends Controller
             $date->modify('- 10 days');
             $agreementdate=$date->format('d-m-Y');
             Investment::where('id', $investment->id)->update([
-                'agreementdate' => $agreementdate,
+                // 'agreementdate' => $agreementdate,
                 'amountpaidsofar'=>$amountpaidsofar,
                 'timeremaining'=>$timeremaining,
                 'stopdate'=>$stopdate,

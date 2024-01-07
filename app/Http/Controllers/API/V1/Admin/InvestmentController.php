@@ -441,7 +441,7 @@ class InvestmentController extends Controller
             $amountpaidsofar=$amount*$totalweekspaid;
             //agreement date
             $date = new DateTime($investment->startdate);
-            $date->modify('- 10 days');
+            $date->modify('- 15 days');
             $agreementdate=$date->format('d-m-Y');
             Investment::where('id', $investment->id)->update([
                 // 'agreementdate' => $agreementdate,

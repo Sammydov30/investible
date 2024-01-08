@@ -355,7 +355,7 @@ class InvestmentController extends Controller
         $amountpaidsofar=$amount*$totalweekspaid;
         //agreement date
         $date = new DateTime($request->startdate);
-        $date->modify('- 10 days');
+        $date->modify('- 15 days');
         $agreementdate=$date->format('d-m-Y');
         $investment->update([
             'agreementdate' => $agreementdate,
@@ -421,9 +421,9 @@ class InvestmentController extends Controller
             }else{
                 $status="2";
             }
-            $currdate=date('d-m-Y');
-            if (date('l', strtotime($currdate))=='Monday') {
-                $lastmonday=$currdate;
+            $currdate2=date('d-m-Y');
+            if (date('l', strtotime($currdate2))=='Monday') {
+                $lastmonday=$currdate2;
             } else {
                 $date = new DateTime();
                 $date->modify('last monday');
@@ -435,10 +435,19 @@ class InvestmentController extends Controller
 
             $difference = $endDate->diff($startDate);
             $totalweekspaid=(($difference->format("%a"))/7)+1;
-            //Time remaining
-            $timeremaining=$no_of-$totalweekspaid;
-            //Amount Paid so far
-            $amountpaidsofar=$amount*$totalweekspaid;
+
+            if ($currdate->format('d-m-Y')===$eDate->format('d-m-Y')) {
+                //Don't stop yet
+                $status="1";
+                $timeremaining=($investment->timeduration-$totalweekspaid)+1;
+                $amountpaidsofar=($amount*$totalweekspaid)-$amount;
+            }else{
+                //Time remaining
+                $timeremaining=$investment->timeduration-$totalweekspaid;
+                //Amount Paid so far
+                $amountpaidsofar=$amount*$totalweekspaid;
+            }
+
             //agreement date
             $date = new DateTime($investment->startdate);
             $date->modify('- 15 days');
@@ -453,10 +462,9 @@ class InvestmentController extends Controller
         }
 
 
-
-        // Investment::where('timeremaining', '0')->update([
-        //     'status' => '2',
-        // ]);
+        Investment::where('timeremaining', '0')->update([
+            'status' => '2',
+        ]);
         $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');
         return response()->json([
             "message"=>"Investments are ready for period payment Successfully",

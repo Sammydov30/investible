@@ -396,8 +396,18 @@ class InvestmentController extends Controller
             }
         }
 
+        Investment::where('timeremaining', '<=', '0')->update([
+            'status' => '2',
+        ]);
+        $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');
+        return response()->json([
+            "message"=>"Investments are ready for period payment Successfully",
+            "status" => "success",
+        ], 200);
+    }
 
-
+    public function updatePast()
+    {
         //close investments
         $investments=Investment::where('status', '1')->get();
         foreach ($investments as $investment) {
@@ -447,6 +457,10 @@ class InvestmentController extends Controller
                 //Amount Paid so far
                 $amountpaidsofar=$amount*$totalweekspaid;
             }
+            if ($timeremaining<=0) {
+                $timeremaining=0;
+                $amountpaidsofar=$amount*$investment->timeduration;
+            }
 
             //agreement date
             $date = new DateTime($investment->startdate);
@@ -460,17 +474,9 @@ class InvestmentController extends Controller
                 'status' => $status
             ]);
         }
-
-
-        Investment::where('timeremaining', '0')->update([
-            'status' => '2',
-        ]);
-        $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');
-        return response()->json([
-            "message"=>"Investments are ready for period payment Successfully",
-            "status" => "success",
-        ], 200);
     }
+
+
     public function justpayInvestment(Request $request)
     {
         if (empty($request->investmentid)) {

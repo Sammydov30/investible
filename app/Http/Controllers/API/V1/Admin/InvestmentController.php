@@ -409,7 +409,7 @@ class InvestmentController extends Controller
     public function updatePast()
     {
         //close investments
-        $investments=Investment::where('status', '1')->get();
+        $investments=Investment::where('status', '1')->where('type', '1')->get();
         foreach ($investments as $investment) {
             //$invdate=date('Y-m-d', strtotime($investment->startdate));
             //$stopdate = $investment->stopdate;

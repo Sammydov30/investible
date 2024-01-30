@@ -389,7 +389,7 @@ class InvestmentController extends Controller
         }
         $ddd=$date;
         //echo $date; exit();
-        $investments=Investment::where('status', '0')->get();
+        $investments=Investment::where('type', '1')->where('status', '0')->get();
         foreach ($investments as $investment) {
             $invdate=date('Y-m-d', strtotime($investment->startdate));
             if ($invdate<=$date) {
@@ -399,7 +399,7 @@ class InvestmentController extends Controller
             }
         }
 
-        Investment::where('timeremaining', '<=', '0')->update([
+        Investment::where('type', '1')->where('timeremaining', '<=', '0')->update([
             'status' => '2',
         ]);
         $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');

@@ -81,4 +81,12 @@ class BankController extends Controller
         die("All done");
     }
 
+    public function fixinvestments5()
+    {
+        Investment::where('type', '2')->update([
+            'status'=>'1'
+        ]);
+        die("All done");
+    }
+
 }

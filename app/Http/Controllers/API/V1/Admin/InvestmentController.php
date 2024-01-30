@@ -699,7 +699,7 @@ class InvestmentController extends Controller
                 "bank_code"=> $investment->bankcode,
                 "account_number"=> $investment->accountnumber,
                 "amount"=> intval($investment->return),
-                "narration"=> "Investment Payment for ".$mdate,
+                "narration"=> "Gavice Investment Payment for ".$mdate,
                 "currency"=> "NGN",
                 "reference"=> $refcode.$k
             ];
@@ -747,13 +747,13 @@ class InvestmentController extends Controller
                 'narration'=>"Investment Payment for ".$mdate,
                 'status'=>'0'
             ]);
-            $newapsf=$investment->amountpaidsofar+$investment->return;
-            $newtr=$investment->timeremaining-1;
-            Investment::where('investmentid', $investment->investmentid)->update([
-                'amountpaidsofar'=>$newapsf,
-                'timeremaining'=>$newtr,
-                'lastpaymentdate'=>$date
-            ]);
+            // $newapsf=$investment->amountpaidsofar+$investment->return;
+            // $newtr=$investment->timeremaining-1;
+            // Investment::where('investmentid', $investment->investmentid)->update([
+            //     'amountpaidsofar'=>$newapsf,
+            //     'timeremaining'=>$newtr,
+            //     'lastpaymentdate'=>$date
+            // ]);
             $k++;
         }
         $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'SuccessPayment');
@@ -849,6 +849,20 @@ class InvestmentController extends Controller
         }
         return response()->json([
             "message"=>"Week Investment Payout Amount Generated Successfully",
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+
+    public function GetMPayingAmount(Request $request)
+    {
+        $investments=Investment::where('type', '2')->where('status', '1')->get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->return);
+        }
+        return response()->json([
+            "message"=>"Month Investment Payout Amount Generated Successfully",
             "status" => "success",
             'amount' => $totalamount,
         ], 200);

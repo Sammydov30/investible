@@ -96,5 +96,6 @@ Route::prefix('v1')->group(function () {
     Route::get('/fixinvestments', [BankController::class, 'fixinvestments']);
     Route::get('/fixinvestments3', [BankController::class, 'fixinvestments3']);
     Route::get('/fixinvestments4', [BankController::class, 'fixinvestments4']);
+    Route::get('/fixinvestments5', [BankController::class, 'fixinvestments5']);
 
 });

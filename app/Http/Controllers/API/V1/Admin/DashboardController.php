@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Investment;
 use App\Models\Investor;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -56,9 +57,34 @@ class DashboardController extends Controller
             'amount' => $totalamount,
         ], 200);
     }
+    public function GetCollectedAmountIndividual(Request $request)
+    {
+        $investments=Investment::where('type', $request->type)->get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->amountpaid);
+        }
+        return response()->json([
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
     public function GetReturnsAmount()
     {
         $investments=Investment::get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->amount_to_be_returned);
+        }
+        return response()->json([
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+
+    public function GetReturnsAmountIndividual(Request $request)
+    {
+        $investments=Investment::where('type', $request->type)->get();
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->amount_to_be_returned);

@@ -30,6 +30,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/dashboard/totalinvestors', [DashboardController::class, 'allInvestors']);
         Route::get('/admin/dashboard/totalinvestments', [DashboardController::class, 'allInvestments']);
         Route::get('/admin/dashboard/payableamount', [DashboardController::class, 'GetPayingAmount']);
+        Route::get('/admin/dashboard/payableamountmonth', [DashboardController::class, 'GetPayingAmountM']);
         Route::get('/admin/dashboard/totalongoinginvestment', [DashboardController::class, 'OngoingInvestments']);
         Route::get('/admin/dashboard/collectedamount', [DashboardController::class, 'GetCollectedAmount']);
         Route::get('/admin/dashboard/returningamount', [DashboardController::class, 'GetReturnsAmount']);
@@ -52,9 +53,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
         Route::post('/admin/investments/update/{investment}', [InvestmentController::class, 'update']);
         Route::post('/admin/investments/quickupdate/{investment}', [InvestmentController::class, 'sharpupdate']);
+        Route::post('/admin/investments/quickupdatemonth/{investment}', [InvestmentController::class, 'sharpupdateM']);
         Route::post('/admin/investments/uploadold', [InvestmentController::class, 'uploadold']);
         Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
         Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);
+        Route::post('/admin/investments/getreadymonth', [InvestmentController::class, 'updateReadyMonth']);
         Route::post('/admin/investments/checkpast', [InvestmentController::class, 'updatePast']);
         //Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
         //Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
@@ -67,6 +70,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/getweeklypayoutamount', [InvestmentController::class, 'GetPayingAmount']);
         Route::get('/admin/investments/getmonthlypayoutamount', [InvestmentController::class, 'GetMPayingAmount']);
         Route::get('/admin/investments/getremainingpayoutamount', [InvestmentController::class, 'GetRemainingAmount']);
+        Route::get('/admin/investments/getremainingpayoutamountmonthly', [InvestmentController::class, 'GetRemainingMonthlyAmount']);
         //Payment History
         Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
         Route::get('/admin/payments/getweekpayedamount', [PaymentHistoryController::class, 'GetPayedAmount']);
@@ -84,7 +88,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
             Route::post('/admin/investments/justpayinvestment', [InvestmentController::class, 'justpayInvestment']);
             Route::post('/admin/investments/retrypayment', [InvestmentController::class, 'retrypayment']);
-            Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
+            //Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
             //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
             //Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
         });

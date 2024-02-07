@@ -45,6 +45,19 @@ class DashboardController extends Controller
             'amount' => $totalamount,
         ], 200);
     }
+    public function GetPayingAmountM()
+    {
+        $investments=Investment::where('type', '2')->whereIn('status', ['0', '1'])->get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->return);
+        }
+        return response()->json([
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+
     public function GetCollectedAmount()
     {
         $investments=Investment::get();
@@ -95,9 +108,13 @@ class DashboardController extends Controller
         ], 200);
     }
 
-    public function GetPayedOutAmount()
+    public function GetPayedOutAmount(Request $request)
     {
-        $investments=Investment::get();
+        if (!empty($request->type)) {
+            $investments=Investment::where('type', $request->type)->get();
+        }else{
+            $investments=Investment::get();
+        }
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->amountpaidsofar);
@@ -108,9 +125,13 @@ class DashboardController extends Controller
         ], 200);
     }
 
-    public function GetDebtAmount()
+    public function GetDebtAmount(Request $request)
     {
-        $investments=Investment::get();
+        if (!empty($request->type)) {
+            $investments=Investment::where('type', $request->type)->get();
+        }else{
+            $investments=Investment::get();
+        }
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+(intval($investment->amount_to_be_returned)-intval($investment->amountpaidsofar));

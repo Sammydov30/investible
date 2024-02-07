@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Investment\CreateInvestmentRequest;
+use App\Http\Requests\Investment\SharpUpdateInvestmentMRequest;
 use App\Http\Requests\Investment\SharpUpdateInvestmentRequest;
 use App\Http\Requests\Investment\UpdateInvestmentRequest;
 use App\Http\Requests\Investment\UploadOldInvestmentRequest;
@@ -33,7 +34,9 @@ class InvestmentController extends Controller
                 $query->where('firstname', "like", "%{$search}%")
                 ->orWhere('lastname', "like", "%{$search}%")
                 ->orWhere('othername', "like", "%{$search}%");
-            });
+            })
+            ->orWhere('accountnumber', $search)
+            ->orWhere('investmentid', $search);
         }
         if (request()->input("investmentid")!=null) {
             $result->where('investmentid', request()->input("investmentid"));
@@ -377,6 +380,76 @@ class InvestmentController extends Controller
         ], 200);
     }
 
+    public function sharpupdateM(SharpUpdateInvestmentMRequest $request, Investment $investment)
+    {
+        if (empty($request->stopdate)) {
+            $date2 = new DateTime($request->startdate);
+            $no_of=$request->no_of-1;
+            $date2->modify("+ $no_of months");
+            $stopdate = $date2->format('m-Y');
+        }else{
+            $stopdate = $request->stopdate;
+            $stopdate = date("m-Y", strtotime($stopdate));
+        }
+        $currdate=new DateTime();
+        $eDate = new DateTime($stopdate);
+        $amount=$investment->return;
+        $startDate = new DateTime($request->startdate);
+        $endDate = new DateTime($stopdate);
+        $difference = $endDate->diff($startDate);
+        $totalweeks=($difference->format("%a"))/7;
+        //echo $totalweeks; exit();
+        if ($currdate<$eDate) {
+            // if ($totalweeks>=$request->no_of) {
+            //     $status="2";
+            // }else{
+            //     $status="1";
+            // }
+            $status="1";
+        }else{
+            $status="2";
+        }
+
+        $currdate=date('d-m-Y');
+
+        $lastmonth=date('m-Y');
+
+        $startdate = $request->startdate;
+        $startdate = date("m-Y", strtotime($startdate));
+        $startDate = new DateTime($startdate);
+        $endDate = new DateTime($lastmonth);
+
+        $difference = $endDate->diff($startDate);
+        $interval = $startDate->diff($endDate);
+        // $totalmonthspaid=(($difference->format("%a"))/30)+1;
+        $totalmonthspaid=$interval->m;
+        //Time remaining
+        $timeremaining=$request->no_of-$totalmonthspaid;
+        //Amount Paid so far
+        $amountpaidsofar=$amount*$totalmonthspaid;
+        //agreement date
+        $date = new DateTime($request->startdate);
+        $date->modify('- 1 months');
+        $agreementdate=$date->format('d-m-Y');
+        $investment->update([
+            'amountpaid'=>$request->amountpaid,
+            'amount_to_be_returned'=>$amount*$request->no_of,
+            'agreementdate' => $agreementdate,
+            'amountpaidsofar'=>$amountpaidsofar,
+            'timeduration'=>$request->no_of,
+            'timeremaining'=>$timeremaining,
+            'startdate'=>$request->startdate,
+            'stopdate'=>$stopdate,
+            'status' => $status
+        ]);
+        $this->AddLog(json_encode($investment), 'investment', 'Sharp Updated');
+        return response()->json([
+            "message"=>"Investment Updated Successfully",
+            "status" => "success",
+            'investment' => $investment,
+        ], 200);
+    }
+
     public function updateReady()
     {
         $currdate=date('Y-m-d');
@@ -400,6 +473,35 @@ class InvestmentController extends Controller
         }
 
         Investment::where('type', '1')->where('timeremaining', '<=', '0')->update([
+            'status' => '2',
+        ]);
+        $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');
+        return response()->json([
+            "message"=>"Investments are ready for period payment Successfully",
+            "status" => "success",
+        ], 200);
+    }
+
+    public function updateReadyMonth()
+    {
+        $currdate=date('Y-m-d');
+        $date=date('m-Y');
+        // $date = new DateTime($currdate);
+        // $date->modify('next monday');
+        // $date=$date->format('Y-m-d');
+        $ddd=date('F-Y');
+        //echo $date; exit();
+        $investments=Investment::where('type', '2')->where('status', '0')->get();
+        foreach ($investments as $investment) {
+            $invdate=date('m-Y', strtotime($investment->startdate));
+            if ($invdate<=$date) {
+                Investment::where('id', $investment->id)->update([
+                    'status' => '1',
+                ]);
+            }
+        }
+
+        Investment::where('type', '2')->where('timeremaining', '<=', '0')->update([
             'status' => '2',
         ]);
         $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');
@@ -960,6 +1062,24 @@ class InvestmentController extends Controller
         }
         return response()->json([
             "message"=>"Week Remaining Payout Amount Generated Successfully",
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+
+    public function GetRemainingMonthlyAmount(Request $request)
+    {
+        $date=$request->date;
+        $investments=Investment::where('type', '2')->where('status', '1')
+        ->where(function($query) use($date){
+            $query->whereNull('lastpaymentdate')->orWhere('lastpaymentdate', '!=', $date);
+        })->get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->return);
+        }
+        return response()->json([
+            "message"=>"Month Remaining Payout Amount Generated Successfully",
             "status" => "success",
             'amount' => $totalamount,
         ], 200);

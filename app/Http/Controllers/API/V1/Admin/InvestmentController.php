@@ -946,14 +946,22 @@ class InvestmentController extends Controller
         $investment=Investment::where('investmentid', $request->investmentid)->update([
             'hold'=>'1',
         ]);
-        return $investment;
+        return response()->json([
+            "investment"=>$investment,
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
     }
 
     public function unfreezeinvestment(Request $request){
         $investment=Investment::where('investmentid', $request->investmentid)->update([
             'hold'=>'0',
         ]);
-        return $investment;
+        return response()->json([
+            "investment"=>$investment,
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
     }
     public function unfreezeinvestments(Request $request){
         Investment::whereIn('investmentid', $request->investmentlist)->update([

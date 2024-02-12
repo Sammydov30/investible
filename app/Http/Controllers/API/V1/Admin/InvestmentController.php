@@ -937,38 +937,43 @@ class InvestmentController extends Controller
         ], 200);
     }
 
-    // public function getfrozeninvestmentsaccountdetails(Request $request)
-    // {
-    //     $investments=Investment::where('type', '1')->where('status', '1')
-    //     ->where('hold', '1')
-    //     ->get();
-    //     $investments=json_decode(json_encode($investments), true);
-    //     $investorlist=[];
-    //     foreach ($investments as $investment) {
-    //         array_push($investorlist, $investment['investor']);
-    //     }
-    //     return response()->json([
-    //         "investmentlist"=>$investmentlist,
-    //         "message"=>"Successful",
-    //         "status" => "success",
-    //     ], 200);
-    // }
-    // public function getAccountDetails($investor)
-    // {
-    //     $accounts=Investment::where('type', '1')->where('status', '1')
-    //     ->where('hold', '1')
-    //     ->get();
-    //     $investments=json_decode(json_encode($investments), true);
-    //     $investmentlist=[];
-    //     foreach ($investments as $investment) {
-    //         array_push($investmentlist, $investment['investmentid']);
-    //     }
-    //     return response()->json([
-    //         "investmentlist"=>$investmentlist,
-    //         "message"=>"Successful",
-    //         "status" => "success",
-    //     ], 200);
-    // }
+    public function getfrozeninvestmentsaccountdetails(Request $request)
+    {
+        $investments=Investment::where('type', '1')->where('status', '1')
+        ->where('hold', '1')
+        ->get();
+        $investments=json_decode(json_encode($investments), true);
+        $investorlist=[];
+        foreach ($investments as $investment) {
+            $acct=[];
+            array_push($acct, $this->getAccountDetails($investment['accountnumber'], $investment['bankcode']));
+            array_push($investorlist, $acct);
+        }
+        return response()->json([
+            "investmentlist"=>$investorlist,
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
+    }
+    public function getAccountDetails($accountnumber, $bank)
+    {
+        $acctrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/accounts/resolve', [
+            "account_number"=> $accountnumber,
+            "account_bank"=> $bank,
+        ]);
+        $res=$acctrequest->json();
+        //print_r($res); exit();
+        $details=$res['data'];
+        return [
+            'accountnumber' => $accountnumber,
+            //'bankcode' => $bank,
+            'bankname'=> $details['bank_name'],
+            'accountname'=> $details['account_name'],
+        ];
+    }
     public function freeze($investmentid){
         Investment::where('investmentid', $investmentid)->update([
             'hold'=>'1',

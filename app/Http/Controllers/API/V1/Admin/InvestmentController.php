@@ -1015,7 +1015,7 @@ class InvestmentController extends Controller
 
     public function GetPayingAmount(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')->get();
+        $investments=Investment::where('type', '1')->where('status', '1')->where('hold', '0')->get();
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->return);
@@ -1029,7 +1029,7 @@ class InvestmentController extends Controller
 
     public function GetMPayingAmount(Request $request)
     {
-        $investments=Investment::where('type', '2')->where('status', '1')->get();
+        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')->get();
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->return);

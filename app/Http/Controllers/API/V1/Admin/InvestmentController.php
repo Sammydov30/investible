@@ -9,6 +9,7 @@ use App\Http\Requests\Investment\SharpUpdateInvestmentRequest;
 use App\Http\Requests\Investment\UpdateInvestmentRequest;
 use App\Http\Requests\Investment\UploadOldInvestmentRequest;
 use App\Models\Account;
+use App\Models\Bank;
 use App\Models\BulkPaymentHistory;
 use App\Models\Investment;
 use App\Models\Investor;
@@ -945,8 +946,8 @@ class InvestmentController extends Controller
         $investments=json_decode(json_encode($investments), true);
         $investorlist=[];
         foreach ($investments as $investment) {
-            $acct=[];
-            array_push($acct, $this->getAccountDetails($investment['accountnumber'], $investment['bankcode']));
+            $acct=$this->getAccountDetails($investment['accountnumber'], $investment['bankcode']);
+            $acct['amount']=number_format($investment['return']);
             array_push($investorlist, $acct);
         }
         return response()->json([
@@ -970,9 +971,12 @@ class InvestmentController extends Controller
         return [
             'accountnumber' => $accountnumber,
             //'bankcode' => $bank,
-            'bankname'=> $details['bank_name'],
+            'bankname'=> $this->getbankname($bank),
             'accountname'=> $details['account_name'],
         ];
+    }
+    public function getbankname($bankcode){
+        return Bank::where('bankcode', $bankcode)->first()->name;
     }
     public function freeze($investmentid){
         Investment::where('investmentid', $investmentid)->update([

@@ -913,7 +913,7 @@ class InvestmentController extends Controller
         ->get();
         return response()->json([
             "investments"=>$investments,
-            "message"=>"Investment Payed Successfully",
+            "message"=>"Action done Successfully",
             "status" => "success",
         ], 200);
     }
@@ -929,7 +929,7 @@ class InvestmentController extends Controller
         }
         return response()->json([
             "investmentlist"=>$investmentlist,
-            "message"=>"Investment Payed Successfully",
+            "message"=>"Successful",
             "status" => "success",
         ], 200);
     }

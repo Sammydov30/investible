@@ -954,7 +954,7 @@ class InvestmentController extends Controller
         }
         return response()->json([
             "investorlist"=>$investorlist,
-            "totalamount"=>$totalamount,
+            "totalamount"=>number_format($totalamount),
             "message"=>"Successful",
             "status" => "success",
         ], 200);

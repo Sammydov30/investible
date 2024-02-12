@@ -47,6 +47,9 @@ class InvestmentController extends Controller
         if (request()->input("type")!=null) {
             $result->where('type', request()->input("type"));
         }
+        if (request()->input("freeze")!=null) {
+            $result->where('hold', request()->input("freeze"));
+        }
         if (request()->input("status")!=null) {
             //$result->where('status', request()->input("status"));
             if (request()->input("status")=='1') {
@@ -581,7 +584,6 @@ class InvestmentController extends Controller
         }
     }
 
-
     public function justpayInvestment(Request $request)
     {
         if (empty($request->investmentid)) {
@@ -886,6 +888,75 @@ class InvestmentController extends Controller
             "message"=>"Investment Payed Successfully",
             "status" => "success",
         ], 200);
+    }
+
+    public function freezebiginvestments(Request $request)
+    {
+        $investments=Investment::where('type', '1')->where('status', '1')
+        ->where('amount', '>', '150000')
+        ->orderby('amount', 'desc')
+        ->get();
+        $investments=json_decode(json_encode($investments), true);
+        $totalamount=0;
+        $investmentlist=[];
+        foreach ($investments as $investment) {
+            if($totalamount>='2000000'){
+                break;
+            }else{
+                $this->freezeinvestment($investment['investmentid']);
+                array_push($investmentlist, $investment['investmentid']);
+            }
+            $totalamount=$totalamount+$investment['amount'];
+        }
+        $investments=Investment::whereIn('investmentid', $investmentlist)
+        ->orderby('amount', 'desc')
+        ->get();
+        return response()->json([
+            "investments"=>$investments,
+            "message"=>"Investment Payed Successfully",
+            "status" => "success",
+        ], 200);
+    }
+    public function getfrozeninvestmentsbyid(Request $request)
+    {
+        $investments=Investment::where('type', '1')->where('status', '1')
+        ->where('hold', '1')
+        ->get();
+        $investments=json_decode(json_encode($investments), true);
+        $investmentlist=[];
+        foreach ($investments as $investment) {
+            array_push($investmentlist, $investment['investmentid']);
+        }
+        return response()->json([
+            "investmentlist"=>$investmentlist,
+            "message"=>"Investment Payed Successfully",
+            "status" => "success",
+        ], 200);
+    }
+    public function freeze($investmentid){
+        Investment::where('investmentid', $investmentid)->update([
+            'hold'=>'1',
+        ]);
+        return;
+    }
+    public function freezeinvestment(Request $request){
+        $investment=Investment::where('investmentid', $request->investmentid)->update([
+            'hold'=>'1',
+        ]);
+        return $investment;
+    }
+
+    public function unfreezeinvestment(Request $request){
+        $investment=Investment::where('investmentid', $request->investmentid)->update([
+            'hold'=>'0',
+        ]);
+        return $investment;
+    }
+    public function unfreezeinvestments(Request $request){
+        Investment::whereIn('investmentid', $$request->investmentlist)->update([
+            'hold'=>'0',
+        ]);
+        return true;
     }
 
     public function destroy(Investment $investment)

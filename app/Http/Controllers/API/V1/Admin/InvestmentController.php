@@ -659,6 +659,9 @@ class InvestmentController extends Controller
         if ($investment->status=='2') {
             return response()->json(["message"=>"This Investment's payment is over", "status"=>"error"], 400);
         }
+        if ($investment->hold=='1') {
+            return response()->json(["message"=>"This Investment is frozen at the moment", "status"=>"error"], 400);
+        }
         $refcode="IP".time();
         $date=date("d-m-Y");
         $paymentrequest = Http::withHeaders([
@@ -710,7 +713,7 @@ class InvestmentController extends Controller
     }
     public function paybulkWeeklyInvestment(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')->get();
+        $investments=Investment::where('type', '1')->where('status', '1')->where('hold', '0')->get();
         $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
@@ -789,7 +792,7 @@ class InvestmentController extends Controller
 
     public function paybulkMonthlyInvestment(Request $request)
     {
-        $investments=Investment::where('type', '2')->where('status', '1')->get();
+        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')->get();
         $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
@@ -953,7 +956,7 @@ class InvestmentController extends Controller
         return $investment;
     }
     public function unfreezeinvestments(Request $request){
-        Investment::whereIn('investmentid', $$request->investmentlist)->update([
+        Investment::whereIn('investmentid', $request->investmentlist)->update([
             'hold'=>'0',
         ]);
         return true;

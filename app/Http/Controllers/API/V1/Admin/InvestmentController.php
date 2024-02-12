@@ -899,6 +899,7 @@ class InvestmentController extends Controller
         ->where('return', '>', '150000')
         ->orderby('return', 'desc')
         ->get();
+        return $investments;
         $investments=json_decode(json_encode($investments), true);
         $totalamount=0;
         $investmentlist=[];
@@ -936,6 +937,39 @@ class InvestmentController extends Controller
             "status" => "success",
         ], 200);
     }
+
+    // public function getfrozeninvestmentsaccountdetails(Request $request)
+    // {
+    //     $investments=Investment::where('type', '1')->where('status', '1')
+    //     ->where('hold', '1')
+    //     ->get();
+    //     $investments=json_decode(json_encode($investments), true);
+    //     $investorlist=[];
+    //     foreach ($investments as $investment) {
+    //         array_push($investorlist, $investment['investor']);
+    //     }
+    //     return response()->json([
+    //         "investmentlist"=>$investmentlist,
+    //         "message"=>"Successful",
+    //         "status" => "success",
+    //     ], 200);
+    // }
+    // public function getAccountDetails($investor)
+    // {
+    //     $accounts=Investment::where('type', '1')->where('status', '1')
+    //     ->where('hold', '1')
+    //     ->get();
+    //     $investments=json_decode(json_encode($investments), true);
+    //     $investmentlist=[];
+    //     foreach ($investments as $investment) {
+    //         array_push($investmentlist, $investment['investmentid']);
+    //     }
+    //     return response()->json([
+    //         "investmentlist"=>$investmentlist,
+    //         "message"=>"Successful",
+    //         "status" => "success",
+    //     ], 200);
+    // }
     public function freeze($investmentid){
         Investment::where('investmentid', $investmentid)->update([
             'hold'=>'1',

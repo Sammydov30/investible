@@ -903,7 +903,7 @@ class InvestmentController extends Controller
             if($totalamount>='2000000'){
                 break;
             }else{
-                $this->freezeinvestment($investment['investmentid']);
+                $this->freeze($investment['investmentid']);
                 array_push($investmentlist, $investment['investmentid']);
             }
             $totalamount=$totalamount+$investment['return'];

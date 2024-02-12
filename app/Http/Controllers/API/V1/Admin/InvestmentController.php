@@ -945,13 +945,16 @@ class InvestmentController extends Controller
         ->get();
         $investments=json_decode(json_encode($investments), true);
         $investorlist=[];
+        $totalamount=0;
         foreach ($investments as $investment) {
             $acct=$this->getAccountDetails($investment['accountnumber'], $investment['bankcode']);
             $acct['amount']=number_format($investment['return']);
+            $totalamount=$totalamount+$investment['return'];
             array_push($investorlist, $acct);
         }
         return response()->json([
-            "investmentlist"=>$investorlist,
+            "investorlist"=>$investorlist,
+            "totalamount"=>$totalamount,
             "message"=>"Successful",
             "status" => "success",
         ], 200);

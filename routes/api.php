@@ -54,6 +54,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/admin/investments/update/{investment}', [InvestmentController::class, 'update']);
         Route::post('/admin/investments/quickupdate/{investment}', [InvestmentController::class, 'sharpupdate']);
         Route::post('/admin/investments/quickupdatemonth/{investment}', [InvestmentController::class, 'sharpupdateM']);
+        Route::post('/admin/investments/quickupdatemonthu/{investment}', [InvestmentController::class, 'sharpupdateUM']);
         Route::post('/admin/investments/uploadold', [InvestmentController::class, 'uploadold']);
         Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
         Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);

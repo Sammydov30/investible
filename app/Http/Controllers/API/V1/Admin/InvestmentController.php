@@ -454,6 +454,31 @@ class InvestmentController extends Controller
         ], 200);
     }
 
+    public function sharpupdateUM(SharpUpdateInvestmentMRequest $request, Investment $investment)
+    {
+
+        $date2 = new DateTime($request->startdate);
+        $no_of=$request->no_of-1;
+        $date2->modify("+ $no_of months");
+        $stopdate = $date2->format('m-Y');
+
+        $amount=$investment->return;
+
+        $startdate = $request->startdate;
+        $investment->update([
+            'amountpaid'=>$request->amountpaid,
+            'amount_to_be_returned'=>$amount*$request->no_of,
+            'timeduration'=>$request->no_of,
+            'startdate'=>$startdate,
+            'stopdate'=>$stopdate,
+        ]);
+        return response()->json([
+            "message"=>"Investment Updated Successfully",
+            "status" => "success",
+            'investment' => $investment,
+        ], 200);
+    }
+
     public function updateReady()
     {
         $currdate=date('Y-m-d');

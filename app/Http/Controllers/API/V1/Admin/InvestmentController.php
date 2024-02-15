@@ -390,10 +390,10 @@ class InvestmentController extends Controller
             $date2 = new DateTime($request->startdate);
             $no_of=$request->no_of-1;
             $date2->modify("+ $no_of months");
-            $stopdate = $date2->format('m-Y');
+            $stopdate = $date2->format('d-m-Y');
         }else{
             $stopdate = $request->stopdate;
-            $stopdate = date("m-Y", strtotime($stopdate));
+            $stopdate = date("d-m-Y", strtotime($stopdate));
         }
         $currdate=new DateTime();
         $eDate = new DateTime($stopdate);
@@ -454,15 +454,16 @@ class InvestmentController extends Controller
         ], 200);
     }
 
-    public function sharpupdateUM(SharpUpdateInvestmentMRequest $request, Investment $investment)
+    public function sharpupdateUM(SharpUpdateInvestmentMRequest $request)
     {
 
         $date2 = new DateTime($request->startdate);
         $no_of=$request->no_of-1;
         $date2->modify("+ $no_of months");
-        $stopdate = $date2->format('m-Y');
+        $stopdate = $date2->format('d-m-Y');
 
-        $amount=$investment->return;
+        $investment=Investment::where('investmentid', $request->investmentid);
+        $amount=$investment->first()->return;
 
         $startdate = $request->startdate;
         $investment->update([

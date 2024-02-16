@@ -419,7 +419,7 @@ class InvestmentController extends Controller
         $lastmonth=date('m-Y');
 
         $startdate = $request->startdate;
-        $startdate = date("m-Y", strtotime($startdate));
+        $startdate = date("d-m-Y", strtotime($startdate));
         $startDate = new DateTime($startdate);
         $endDate = new DateTime($lastmonth);
 

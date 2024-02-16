@@ -473,6 +473,7 @@ class InvestmentController extends Controller
             'startdate'=>$startdate,
             'stopdate'=>$stopdate,
         ]);
+        $investment=Investment::where('investmentid', $request->investmentid)->first();
         return response()->json([
             "message"=>"Investment Updated Successfully",
             "status" => "success",

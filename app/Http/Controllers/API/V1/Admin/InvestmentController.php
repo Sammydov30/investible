@@ -416,7 +416,7 @@ class InvestmentController extends Controller
 
         $currdate=date('d-m-Y');
 
-        $lastmonth=date('m-Y');
+        $lastmonth=date('d-m-Y');
 
         $startdate = $request->startdate;
         $startdate = date("d-m-Y", strtotime($startdate));
@@ -769,6 +769,86 @@ class InvestmentController extends Controller
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
             "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
+            "title"=> "Weekly Bulk Payment for ".$date,
+            "bulk_data"=> $bulkdata,
+        ]);
+        $res=$paymentrequest->json();
+        //print_r($res); exit();
+        if (!$res['status']) {
+            $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
+            $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
+        }
+        $transferid=$res['data']['id'];
+        BulkPaymentHistory::created([
+            'transferid'=>$transferid,
+        ]);
+        /////////////////
+        ///Update records
+        ///////////////////
+        foreach ($investments as $investment) {
+            PaymentHistory::create([
+                'transfercode'=>$refcode.$k,
+                'investmentid'=>$investment->investmentid,
+                'investorid'=>$investment->investor,
+                'accountnumber'=>$investment->accountnumber,
+                'bankcode'=>$investment->bankcode,
+                'amount'=>$investment->return,
+                'pdate'=>$date,
+                'narration'=>"Gavice Weekly Investment Payment for ".$date,
+                'status'=>'0'
+            ]);
+            $newapsf=$investment->amountpaidsofar+$investment->return;
+            $newtr=$investment->timeremaining-1;
+            Investment::where('investmentid', $investment->investmentid)->update([
+                'amountpaidsofar'=>$newapsf,
+                'timeremaining'=>$newtr,
+                'lastpaymentdate'=>$date
+            ]);
+            $k++;
+        }
+        $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'SuccessPayment');
+        return response()->json([
+            "message"=>"Investment Payment Dispatched Successfully",
+            "status" => "success",
+        ], 200);
+    }
+    public function paybulkWeeklyFrozenInvestment(Request $request)
+    {
+        $investments=Investment::where('type', '1')->where('status', '1')
+        ->where('hold', '1')
+        ->whereIn('investmentid', $request->investmentlist)->get();
+        $k=1;
+        $refcode="IP".time();
+        $date=date("d-m-Y");
+        /////////////////
+        ///Get Bulk data
+        ///////////////////
+        $bulkdata=[];
+        foreach ($investments as $investment) {
+            $newdata=(object)[
+                "bank_code"=> $investment->bankcode,
+                "account_number"=> $investment->accountnumber,
+                "amount"=> intval($investment->return),
+                "narration"=> "Gavice Investment Payment for ".$date,
+                "currency"=> "NGN",
+                "reference"=> $refcode.$k
+            ];
+            array_push($bulkdata, $newdata);
+            $k++;
+        }
+        //print_r($bulkdata);
+
+        /////////////////
+        ///Make Payment
+        ///////////////////
+        $paymentrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY_2'),
         ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
             "title"=> "Weekly Bulk Payment for ".$date,
             "bulk_data"=> $bulkdata,

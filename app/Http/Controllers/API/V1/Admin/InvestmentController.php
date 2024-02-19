@@ -1004,7 +1004,7 @@ class InvestmentController extends Controller
     public function freezebiginvestments(Request $request)
     {
         $investments=Investment::where('type', '1')->where('status', '1')
-        ->where('return', '>=', 100000)
+        ->where('return', '>=', 100000)->where('accountnumber', '!=', '6192080675')
         ->orderby('return', 'desc')
         ->get();
         $investments=json_decode(json_encode($investments), true);

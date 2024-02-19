@@ -706,7 +706,7 @@ class InvestmentController extends Controller
             "debit_currency"=> "NGN"
         ]);
         $res=$paymentrequest->json();
-        //print_r($res); exit();
+        print_r($res); exit();
         if (!$res['status']) {
             return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
         }

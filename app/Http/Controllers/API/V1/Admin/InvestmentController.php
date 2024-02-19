@@ -843,6 +843,7 @@ class InvestmentController extends Controller
         }
         //print_r($bulkdata);
 
+
         /////////////////
         ///Make Payment
         ///////////////////

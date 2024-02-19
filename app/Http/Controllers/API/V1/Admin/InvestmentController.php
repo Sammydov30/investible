@@ -526,7 +526,6 @@ class InvestmentController extends Controller
             $invdate=date('m-Y', strtotime('2023-12-30'));
             $invmonth=date('m', strtotime('2023-12-30'));
             $invyear=date('Y', strtotime('2023-12-30'));
-            var_dump($invmonth<=$currmonth); var_dump($invyear<=$curryear); exit();
             if ($invyear<$curryear) {
                 Investment::where('id', $investment->id)->update([
                     'status' => '1',

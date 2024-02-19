@@ -694,7 +694,7 @@ class InvestmentController extends Controller
         $date=date("d-m-Y");
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
-            "Authorization" => "Bearer ".env('FW_KEYT'),
+            "Authorization" => "Bearer ".env('FW_KEY'),
         ])->post('https://api.flutterwave.com/v3/transfers', [
             "account_number"=> $investment->accountnumber,
             "account_bank"=> $investment->bankcode,
@@ -706,7 +706,7 @@ class InvestmentController extends Controller
             "debit_currency"=> "NGN"
         ]);
         $res=$paymentrequest->json();
-        print_r($res); exit();
+        //print_r($res); exit();
         if (!$res['status']) {
             return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
         }

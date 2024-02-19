@@ -694,7 +694,7 @@ class InvestmentController extends Controller
         $date=date("d-m-Y");
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
-            "Authorization" => "Bearer ".env('FW_KEY_2'),
+            "Authorization" => "Bearer ".env('FW_KEYT'),
         ])->post('https://api.flutterwave.com/v3/transfers', [
             "account_number"=> $investment->accountnumber,
             "account_bank"=> $investment->bankcode,
@@ -848,7 +848,7 @@ class InvestmentController extends Controller
         ///////////////////
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
-            "Authorization" => "Bearer ".env('FW_KEY_2'),
+            "Authorization" => "Bearer ".env('FW_KEYT'),
         ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
             "title"=> "Weekly Bulk Payment for ".$date,
             "bulk_data"=> $bulkdata,
@@ -887,6 +887,7 @@ class InvestmentController extends Controller
             Investment::where('investmentid', $investment->investmentid)->update([
                 'amountpaidsofar'=>$newapsf,
                 'timeremaining'=>$newtr,
+                'hold'=>'0',
                 'lastpaymentdate'=>$date
             ]);
             $k++;

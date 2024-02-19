@@ -535,6 +535,10 @@ class InvestmentController extends Controller
                     Investment::where('id', $investment->id)->update([
                         'status' => '1',
                     ]);
+                }else{
+                    Investment::where('id', $investment->id)->update([
+                        'status' => '0',
+                    ]);
                 }
             }else{
                 Investment::where('id', $investment->id)->update([

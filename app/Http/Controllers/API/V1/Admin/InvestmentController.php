@@ -521,7 +521,7 @@ class InvestmentController extends Controller
         $curryear=date('Y');
         $ddd=date('F-Y');
         //echo $date; exit();
-        $investments=Investment::where('type', '2')->get();
+        $investments=Investment::where('type', '2')->where('status', '0')->get();
         foreach ($investments as $investment) {
             $invdate=date('m-Y', strtotime($investment->startdate));
             $invmonth=date('m', strtotime($investment->startdate));
@@ -535,15 +535,7 @@ class InvestmentController extends Controller
                     Investment::where('id', $investment->id)->update([
                         'status' => '1',
                     ]);
-                }else{
-                    Investment::where('id', $investment->id)->update([
-                        'status' => '0',
-                    ]);
                 }
-            }else{
-                Investment::where('id', $investment->id)->update([
-                    'status' => '0',
-                ]);
             }
         }
 

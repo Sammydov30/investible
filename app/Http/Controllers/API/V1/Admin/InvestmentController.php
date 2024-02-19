@@ -525,7 +525,7 @@ class InvestmentController extends Controller
         $investments=Investment::where('type', '2')->where('status', '0')->get();
         foreach ($investments as $investment) {
             $invdate=date('m-Y', strtotime('2023-12-30'));
-            echo $invdate; exit();
+            echo $date, ' ', $invdate; exit();
             if ($invdate<=$date) {
                 Investment::where('id', $investment->id)->update([
                     'status' => '1',

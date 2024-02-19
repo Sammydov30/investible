@@ -517,7 +517,7 @@ class InvestmentController extends Controller
     {
         $currdate=date('Y-m-d');
         $date=date('m-Y');
-        // $date = new DateTime($currdate);
+        $date = new DateTime($date);
         // $date->modify('next monday');
         // $date=$date->format('Y-m-d');
         $ddd=date('F-Y');
@@ -525,6 +525,7 @@ class InvestmentController extends Controller
         $investments=Investment::where('type', '2')->where('status', '0')->get();
         foreach ($investments as $investment) {
             $invdate=date('m-Y', strtotime('2023-12-30'));
+            $invdate=new DateTime($invdate);
             var_dump($invdate<=$date); exit();
             if ($invdate<=$date) {
                 Investment::where('id', $investment->id)->update([

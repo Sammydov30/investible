@@ -521,11 +521,11 @@ class InvestmentController extends Controller
         $curryear=date('Y');
         $ddd=date('F-Y');
         //echo $date; exit();
-        $investments=Investment::where('type', '2')->where('status', '0')->get();
+        $investments=Investment::where('type', '2')->get();
         foreach ($investments as $investment) {
-            $invdate=date('m-Y', strtotime('2023-12-30'));
-            $invmonth=date('m', strtotime('2023-12-30'));
-            $invyear=date('Y', strtotime('2023-12-30'));
+            $invdate=date('m-Y', strtotime($investment->startdate));
+            $invmonth=date('m', strtotime($investment->startdate));
+            $invyear=date('Y', strtotime($investment->startdate));
             if ($invyear<$curryear) {
                 Investment::where('id', $investment->id)->update([
                     'status' => '1',
@@ -536,6 +536,10 @@ class InvestmentController extends Controller
                         'status' => '1',
                     ]);
                 }
+            }else{
+                Investment::where('id', $investment->id)->update([
+                    'status' => '0',
+                ]);
             }
         }
 

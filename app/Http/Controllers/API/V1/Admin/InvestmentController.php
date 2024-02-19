@@ -517,20 +517,26 @@ class InvestmentController extends Controller
     {
         $currdate=date('Y-m-d');
         $date=date('m-Y');
-        $date = new DateTime($date);
-        // $date->modify('next monday');
-        // $date=$date->format('Y-m-d');
+        $currmonth = date('m');
+        $curryear=date('Y');
         $ddd=date('F-Y');
         //echo $date; exit();
         $investments=Investment::where('type', '2')->where('status', '0')->get();
         foreach ($investments as $investment) {
             $invdate=date('m-Y', strtotime('2023-12-30'));
-            $invdate=new DateTime($invdate);
-            var_dump($invdate<=$date); exit();
-            if ($invdate<=$date) {
+            $invmonth=date('m', strtotime('2023-12-30'));
+            $invyear=date('Y', strtotime('2023-12-30'));
+            var_dump($invmonth<=$currmonth); var_dump($invyear<=$curryear); exit();
+            if ($invyear<$curryear) {
                 Investment::where('id', $investment->id)->update([
                     'status' => '1',
                 ]);
+            }elseif ($invyear==$curryear) {
+                if ($invmonth<=$currmonth) {
+                    Investment::where('id', $investment->id)->update([
+                        'status' => '1',
+                    ]);
+                }
             }
         }
 

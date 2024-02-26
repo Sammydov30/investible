@@ -1102,7 +1102,7 @@ class InvestmentController extends Controller
         $totalamount=0;
         $investmentlist=[];
         foreach ($investments as $investment) {
-            if($totalamount>='3800000'){
+            if($totalamount>='5500000'){
                 break;
             }else{
                 $this->freeze($investment['investmentid']);

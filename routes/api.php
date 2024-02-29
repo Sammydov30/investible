@@ -73,11 +73,14 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/getremainingpayoutamount', [InvestmentController::class, 'GetRemainingAmount']);
         Route::get('/admin/investments/getremainingpayoutamountmonthly', [InvestmentController::class, 'GetRemainingMonthlyAmount']);
         Route::get('/admin/investments/freezebiginvestments', [InvestmentController::class, 'freezebiginvestments']);
+        Route::get('/admin/investments/freezebiginvestments2', [InvestmentController::class, 'freezebiginvestments2']);
         Route::post('/admin/investments/unfreezeinvestments', [InvestmentController::class, 'unfreezeinvestments']);
         Route::get('/admin/investments/unfreezeinvestment', [InvestmentController::class, 'unfreezeinvestment']);
         Route::get('/admin/investments/freezeinvestment', [InvestmentController::class, 'freezeinvestment']);
         Route::get('/admin/investments/getfrozeninvestmentsbyid', [InvestmentController::class, 'getfrozeninvestmentsbyid']);
+        Route::get('/admin/investments/getfrozeninvestmentsbyid2', [InvestmentController::class, 'getfrozeninvestmentsbyid2']);
         Route::get('/admin/investments/getfrozeninvestmentsaccountdetails', [InvestmentController::class, 'getfrozeninvestmentsaccountdetails']);
+        Route::get('/admin/investments/getfrozeninvestmentsaccountdetails2', [InvestmentController::class, 'getfrozeninvestmentsaccountdetails2']);
 
         //Payment History
         Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
@@ -96,10 +99,10 @@ Route::prefix('v1')->group(function () {
             Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
             Route::post('/admin/investments/justpayinvestment', [InvestmentController::class, 'justpayInvestment']);
             Route::post('/admin/investments/retrypayment', [InvestmentController::class, 'retrypayment']);
-            Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
-            Route::post('/admin/investments/payweeklyfrozeninvestment', [InvestmentController::class, 'paybulkWeeklyFrozenInvestment']);
-            //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
-            //Route::post('/admin/investments/paymonthlyinvestment20th', [InvestmentController::class, 'paybulkMonthlyInvestment2']);
+            //Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
+            //Route::post('/admin/investments/payweeklyfrozeninvestment', [InvestmentController::class, 'paybulkWeeklyFrozenInvestment']);
+            Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
+            Route::post('/admin/investments/paymonthlyinvestment20th', [InvestmentController::class, 'paybulkMonthlyInvestment2']);
             //Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
         });
 

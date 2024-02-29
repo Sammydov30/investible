@@ -988,6 +988,87 @@ class InvestmentController extends Controller
         ], 200);
     }
 
+    public function paybulkMonthlyInvestmentFrozen(Request $request)
+    {
+        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '1')
+        ->where('monthtype', '0')->get();
+        $k=1;
+        $refcode="IP".time();
+        $date=date("d-m-Y");
+        $mdate=date("F-Y");
+        /////////////////
+        ///Get Bulk data
+        ///////////////////
+        $bulkdata=[];
+        foreach ($investments as $investment) {
+            $newdata=(object)[
+                "bank_code"=> $investment->bankcode,
+                "account_number"=> $investment->accountnumber,
+                "amount"=> intval($investment->return),
+                "narration"=> "Gavice Investment Payment for ".$mdate,
+                "currency"=> "NGN",
+                "reference"=> $refcode.$k
+            ];
+            array_push($bulkdata, $newdata);
+            $k++;
+        }
+        //print_r($bulkdata);
+
+        /////////////////
+        ///Make Payment
+        ///////////////////
+        $paymentrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
+            "title"=> "Monthly Bulk Payment for ".$mdate,
+            "bulk_data"=> $bulkdata,
+        ]);
+        $res=$paymentrequest->json();
+        //print_r($res); exit();
+        if (!$res['status']) {
+            $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
+            $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
+        }
+        $transferid=$res['data']['id'];
+        BulkPaymentHistory::created([
+            'transferid'=>$transferid,
+        ]);
+        /////////////////
+        ///Update records
+        ///////////////////
+        foreach ($investments as $investment) {
+            PaymentHistory::create([
+                'transfercode'=>$refcode.$k,
+                'investmentid'=>$investment->investmentid,
+                'investorid'=>$investment->investor,
+                'accountnumber'=>$investment->accountnumber,
+                'bankcode'=>$investment->bankcode,
+                'amount'=>$investment->return,
+                'pdate'=>$date,
+                'narration'=>"Investment Payment for ".$mdate,
+                'status'=>'0'
+            ]);
+            // $newapsf=$investment->amountpaidsofar+$investment->return;
+            // $newtr=$investment->timeremaining-1;
+            // Investment::where('investmentid', $investment->investmentid)->update([
+            //     'amountpaidsofar'=>$newapsf,
+            //     'timeremaining'=>$newtr,
+            //     'lastpaymentdate'=>$date
+            // ]);
+            $k++;
+        }
+        $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'SuccessPayment');
+        return response()->json([
+            "message"=>"Investment Payment Dispatched Successfully",
+            "status" => "success",
+        ], 200);
+    }
+
     public function paybulkMonthlyInvestment2(Request $request)
     {
         $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
@@ -1094,7 +1175,7 @@ class InvestmentController extends Controller
 
     public function freezebiginvestments(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')
+        $investments=Investment::where('type', $request->type)->where('status', '1')
         ->where('return', '>=', 100000)->where('accountnumber', '!=', '6192080675')
         ->orderby('return', 'desc')
         ->get();
@@ -1102,7 +1183,7 @@ class InvestmentController extends Controller
         $totalamount=0;
         $investmentlist=[];
         foreach ($investments as $investment) {
-            if($totalamount>='5500000'){
+            if($totalamount>=$request->splitamount){
                 break;
             }else{
                 $this->freeze($investment['investmentid']);
@@ -1119,10 +1200,53 @@ class InvestmentController extends Controller
             "status" => "success",
         ], 200);
     }
+    public function freezebiginvestments2(Request $request)
+    {
+        $investments=Investment::where('type', $request->type)->where('status', '1')
+        ->where('return', '>=', 100000)->where('accountnumber', '!=', '6192080675')
+        ->orderby('return', 'desc')
+        ->get();
+        $investments=json_decode(json_encode($investments), true);
+        $totalamount=0;
+        $investmentlist=[];
+        foreach ($investments as $investment) {
+            if($totalamount>=$request->splitamount){
+                break;
+            }else{
+                $this->freeze2($investment['investmentid']);
+                array_push($investmentlist, $investment['investmentid']);
+            }
+            $totalamount=$totalamount+$investment['return'];
+        }
+        $investments=Investment::whereIn('investmentid', $investmentlist)
+        ->orderby('return', 'desc')
+        ->get();
+        return response()->json([
+            "investments"=>$investments,
+            "message"=>"Action done Successfully",
+            "status" => "success",
+        ], 200);
+    }
     public function getfrozeninvestmentsbyid(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')
+        $investments=Investment::where('type', $request->type)->where('status', '1')
         ->where('hold', '1')
+        ->get();
+        $investments=json_decode(json_encode($investments), true);
+        $investmentlist=[];
+        foreach ($investments as $investment) {
+            array_push($investmentlist, $investment['investmentid']);
+        }
+        return response()->json([
+            "investmentlist"=>$investmentlist,
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
+    }
+    public function getfrozeninvestmentsbyid2(Request $request)
+    {
+        $investments=Investment::where('type', $request->type)->where('status', '1')
+        ->where('hold', '2')
         ->get();
         $investments=json_decode(json_encode($investments), true);
         $investmentlist=[];
@@ -1138,8 +1262,30 @@ class InvestmentController extends Controller
 
     public function getfrozeninvestmentsaccountdetails(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')
+        $investments=Investment::where('type', $request->type)->where('status', '1')
         ->where('hold', '1')
+        ->get();
+        $investments=json_decode(json_encode($investments), true);
+        $investorlist=[];
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $acct=$this->getAccountDetails($investment['accountnumber'], $investment['bankcode']);
+            $acct['amount']=number_format($investment['return']);
+            $totalamount=$totalamount+$investment['return'];
+            array_push($investorlist, $acct);
+        }
+        return response()->json([
+            "investorlist"=>$investorlist,
+            "totalamount"=>number_format($totalamount),
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
+    }
+
+    public function getfrozeninvestmentsaccountdetails2(Request $request)
+    {
+        $investments=Investment::where('type', $request->type)->where('status', '1')
+        ->where('hold', '2')
         ->get();
         $investments=json_decode(json_encode($investments), true);
         $investorlist=[];
@@ -1182,6 +1328,12 @@ class InvestmentController extends Controller
     public function freeze($investmentid){
         Investment::where('investmentid', $investmentid)->update([
             'hold'=>'1',
+        ]);
+        return;
+    }
+    public function freeze2($investmentid){
+        Investment::where('investmentid', $investmentid)->update([
+            'hold'=>'2',
         ]);
         return;
     }
@@ -1283,7 +1435,8 @@ class InvestmentController extends Controller
 
     public function GetMPayingAmount(Request $request)
     {
-        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')->get();
+        $investments=Investment::where('type', '2')->where('status', '1')
+        ->where('monthtype', '1')->where('hold', '0')->get();
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->return);

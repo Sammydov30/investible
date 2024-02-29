@@ -1177,7 +1177,7 @@ class InvestmentController extends Controller
             array_push($bulkdata, $newdata);
             $k++;
         }
-        print_r($bulkdata); exit();
+        //print_r($bulkdata); exit();
 
         /////////////////
         ///Make Payment

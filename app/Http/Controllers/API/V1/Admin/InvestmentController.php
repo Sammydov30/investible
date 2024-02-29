@@ -1019,7 +1019,7 @@ class InvestmentController extends Controller
         ///////////////////
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
-            "Authorization" => "Bearer ".env('FW_KEY'),
+            "Authorization" => "Bearer ".env('FW_KEYT'),
         ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
             "title"=> "Monthly Bulk Payment for ".$mdate,
             "bulk_data"=> $bulkdata,

@@ -1203,7 +1203,7 @@ class InvestmentController extends Controller
     public function freezebiginvestments2(Request $request)
     {
         $investments=Investment::where('type', $request->type)->where('status', '1')
-        ->where('monthtype', '0')->where('return', '>=', 100000)
+        ->where('monthtype', '0')->where('return', '>=', $request->stopamount)
         ->where('accountnumber', '!=', '6192080675')->orderby('return', 'desc')
         ->get();
         $investments=json_decode(json_encode($investments), true);
@@ -1443,6 +1443,20 @@ class InvestmentController extends Controller
         }
         return response()->json([
             "message"=>"Month Investment Payout Amount Generated Successfully",
+            "status" => "success",
+            'amount' => $totalamount,
+        ], 200);
+    }
+    public function GetSplitPayingAmount(Request $request)
+    {
+        $investments=Investment::where('type', $request->type)->where('status', '1')
+        ->where('monthtype', '0')->where('hold', '1')->get();
+        $totalamount=0;
+        foreach ($investments as $investment) {
+            $totalamount=$totalamount+intval($investment->return);
+        }
+        return response()->json([
+            "message"=>"Amount Generated Successfully",
             "status" => "success",
             'amount' => $totalamount,
         ], 200);

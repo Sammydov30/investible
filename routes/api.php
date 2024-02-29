@@ -70,6 +70,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);
         Route::get('/admin/investments/getweeklypayoutamount', [InvestmentController::class, 'GetPayingAmount']);
         Route::get('/admin/investments/getmonthlypayoutamount', [InvestmentController::class, 'GetMPayingAmount']);
+        Route::get('/admin/investments/getsplitamount', [InvestmentController::class, 'GetSplitPayingAmount']);
         Route::get('/admin/investments/getremainingpayoutamount', [InvestmentController::class, 'GetRemainingAmount']);
         Route::get('/admin/investments/getremainingpayoutamountmonthly', [InvestmentController::class, 'GetRemainingMonthlyAmount']);
         Route::get('/admin/investments/freezebiginvestments', [InvestmentController::class, 'freezebiginvestments']);

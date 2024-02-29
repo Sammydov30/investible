@@ -1368,6 +1368,16 @@ class InvestmentController extends Controller
         return true;
     }
 
+    public function unexpireinvestments(Request $request){
+        Investment::whereIn('investmentid', $request->investmentlist)->update([
+            'status'=>'1',
+        ]);
+        return response()->json([
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
+    }
+
     public function destroy(Investment $investment)
     {
         $this->AddLog(json_encode($investment), 'investment', 'Deleted');

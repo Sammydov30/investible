@@ -697,6 +697,9 @@ class InvestmentController extends Controller
         if ($investment->hold=='1') {
             return response()->json(["message"=>"This Investment is frozen at the moment", "status"=>"error"], 400);
         }
+        if ($investment->monthtype=='1') {
+            return response()->json(["message"=>"Can not pay this Investment", "status"=>"error"], 400);
+        }
         $refcode="IP".time();
         $date=date("d-m-Y");
         $paymentrequest = Http::withHeaders([

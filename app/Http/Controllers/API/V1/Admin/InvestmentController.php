@@ -988,7 +988,7 @@ class InvestmentController extends Controller
         ], 200);
     }
 
-    public function paybulkMonthlyInvestmentFrozen(Request $request)
+    public function paybulkMonthlyFrozenInvestment(Request $request)
     {
         $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '1')
         ->where('monthtype', '0')->get();
@@ -1436,7 +1436,7 @@ class InvestmentController extends Controller
     public function GetMPayingAmount(Request $request)
     {
         $investments=Investment::where('type', '2')->where('status', '1')
-        ->where('monthtype', '1')->where('hold', '0')->get();
+        ->where('monthtype', '0')->where('hold', '0')->get();
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->return);

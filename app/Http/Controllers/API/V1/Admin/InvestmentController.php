@@ -975,13 +975,13 @@ class InvestmentController extends Controller
                 'narration'=>"Investment Payment for ".$mdate,
                 'status'=>'0'
             ]);
-            // $newapsf=$investment->amountpaidsofar+$investment->return;
-            // $newtr=$investment->timeremaining-1;
-            // Investment::where('investmentid', $investment->investmentid)->update([
-            //     'amountpaidsofar'=>$newapsf,
-            //     'timeremaining'=>$newtr,
-            //     'lastpaymentdate'=>$date
-            // ]);
+            $newapsf=$investment->amountpaidsofar+$investment->return;
+            $newtr=$investment->timeremaining-1;
+            Investment::where('investmentid', $investment->investmentid)->update([
+                'amountpaidsofar'=>$newapsf,
+                'timeremaining'=>$newtr,
+                'lastpaymentdate'=>$date
+            ]);
             $k++;
         }
         $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'SuccessPayment');
@@ -1056,13 +1056,13 @@ class InvestmentController extends Controller
                 'narration'=>"Investment Payment for ".$mdate,
                 'status'=>'0'
             ]);
-            // $newapsf=$investment->amountpaidsofar+$investment->return;
-            // $newtr=$investment->timeremaining-1;
-            // Investment::where('investmentid', $investment->investmentid)->update([
-            //     'amountpaidsofar'=>$newapsf,
-            //     'timeremaining'=>$newtr,
-            //     'lastpaymentdate'=>$date
-            // ]);
+            $newapsf=$investment->amountpaidsofar+$investment->return;
+            $newtr=$investment->timeremaining-1;
+            Investment::where('investmentid', $investment->investmentid)->update([
+                'amountpaidsofar'=>$newapsf,
+                'timeremaining'=>$newtr,
+                'lastpaymentdate'=>$date
+            ]);
             $k++;
         }
         $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'SuccessPayment');
@@ -1137,13 +1137,94 @@ class InvestmentController extends Controller
                 'narration'=>"Investment Payment for ".$mdate,
                 'status'=>'0'
             ]);
-            // $newapsf=$investment->amountpaidsofar+$investment->return;
-            // $newtr=$investment->timeremaining-1;
-            // Investment::where('investmentid', $investment->investmentid)->update([
-            //     'amountpaidsofar'=>$newapsf,
-            //     'timeremaining'=>$newtr,
-            //     'lastpaymentdate'=>$date
-            // ]);
+            $newapsf=$investment->amountpaidsofar+$investment->return;
+            $newtr=$investment->timeremaining-1;
+            Investment::where('investmentid', $investment->investmentid)->update([
+                'amountpaidsofar'=>$newapsf,
+                'timeremaining'=>$newtr,
+                'lastpaymentdate'=>$date
+            ]);
+            $k++;
+        }
+        $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'SuccessPayment');
+        return response()->json([
+            "message"=>"Investment Payment Dispatched Successfully",
+            "status" => "success",
+        ], 200);
+    }
+
+    public function paybulkMonthlyInvestmentsharp(Request $request)
+    {
+        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
+        ->whereIn('investmentid', $request->investmentlist)->get();
+        $k=1;
+        $refcode="IP".time();
+        $date=date("d-m-Y");
+        $mdate=date("F-Y");
+        /////////////////
+        ///Get Bulk data
+        ///////////////////
+        $bulkdata=[];
+        foreach ($investments as $investment) {
+            $newdata=(object)[
+                "bank_code"=> $investment->bankcode,
+                "account_number"=> $investment->accountnumber,
+                "amount"=> intval($investment->return),
+                "narration"=> "Gavice Investment Payment for ".$mdate,
+                "currency"=> "NGN",
+                "reference"=> $refcode.$k
+            ];
+            array_push($bulkdata, $newdata);
+            $k++;
+        }
+        print_r($bulkdata); exit();
+
+        /////////////////
+        ///Make Payment
+        ///////////////////
+        $paymentrequest = Http::withHeaders([
+            "content-type" => "application/json",
+            "Authorization" => "Bearer ".env('FW_KEY'),
+        ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
+            "title"=> "Monthly Bulk Payment for ".$mdate,
+            "bulk_data"=> $bulkdata,
+        ]);
+        $res=$paymentrequest->json();
+        //print_r($res); exit();
+        if (!$res['status']) {
+            $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
+        }
+        if ($res['status']=='error') {
+            $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'FailedPayment');
+            return response()->json(["message" => "An Error occurred while executing action", "status" => "error"], 400);
+        }
+        $transferid=$res['data']['id'];
+        BulkPaymentHistory::created([
+            'transferid'=>$transferid,
+        ]);
+        /////////////////
+        ///Update records
+        ///////////////////
+        foreach ($investments as $investment) {
+            PaymentHistory::create([
+                'transfercode'=>$refcode.$k,
+                'investmentid'=>$investment->investmentid,
+                'investorid'=>$investment->investor,
+                'accountnumber'=>$investment->accountnumber,
+                'bankcode'=>$investment->bankcode,
+                'amount'=>$investment->return,
+                'pdate'=>$date,
+                'narration'=>"Investment Payment for ".$mdate,
+                'status'=>'0'
+            ]);
+            $newapsf=$investment->amountpaidsofar+$investment->return;
+            $newtr=$investment->timeremaining-1;
+            Investment::where('investmentid', $investment->investmentid)->update([
+                'amountpaidsofar'=>$newapsf,
+                'timeremaining'=>$newtr,
+                'lastpaymentdate'=>$date
+            ]);
             $k++;
         }
         $this->AddLog(json_encode($bulkdata), 'monthbulkpayment', 'SuccessPayment');

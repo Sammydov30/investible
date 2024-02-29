@@ -54,7 +54,7 @@ class InvestmentController extends Controller
         if (request()->input("status")!=null) {
             //$result->where('status', request()->input("status"));
             if (request()->input("status")=='1') {
-                $result->whereIn('status', ['0', '1']);
+                $result->whereIn('status', ['0', '1', '2']);
             }
         }
         if ((request()->input("sortBy")!=null) && in_array(request()->input("sortBy"), ['id', 'created_at'])) {

@@ -60,10 +60,6 @@ Route::prefix('v1')->group(function () {
         Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);
         Route::post('/admin/investments/getreadymonth', [InvestmentController::class, 'updateReadyMonth']);
         Route::post('/admin/investments/checkpast', [InvestmentController::class, 'updatePast']);
-        //Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
-        //Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
-        //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
-        //Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
         Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
         Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
         Route::get('/admin/investments/fetchexportableinvestments', [InvestmentController::class, 'exportable']);
@@ -106,7 +102,7 @@ Route::prefix('v1')->group(function () {
             //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
             //Route::post('/admin/investments/paymonthlyfrozeninvestment', [InvestmentController::class, 'paybulkMonthlyFrozenInvestment']);
             //Route::post('/admin/investments/paymonthlyinvestment20th', [InvestmentController::class, 'paybulkMonthlyInvestment2']);
-            Route::post('/admin/investments/paymonthlyinvestmentsharp', [InvestmentController::class, 'paybulkMonthlyInvestmentsharp']);
+            //Route::post('/admin/investments/paymonthlyinvestmentsharp', [InvestmentController::class, 'paybulkMonthlyInvestmentsharp']);
             //Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
         });
 

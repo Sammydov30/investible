@@ -898,7 +898,6 @@ class InvestmentController extends Controller
             Investment::where('investmentid', $investment->investmentid)->update([
                 'amountpaidsofar'=>$newapsf,
                 'timeremaining'=>$newtr,
-                'hold'=>'0',
                 'lastpaymentdate'=>$date
             ]);
             $k++;

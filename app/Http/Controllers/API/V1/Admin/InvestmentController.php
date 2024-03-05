@@ -704,7 +704,7 @@ class InvestmentController extends Controller
         $date=date("d-m-Y");
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
-            "Authorization" => "Bearer ".env('FW_KEYT'),
+            "Authorization" => "Bearer ".env('FW_KEY'),
         ])->post('https://api.flutterwave.com/v3/transfers', [
             "account_number"=> $investment->accountnumber,
             "account_bank"=> $investment->bankcode,

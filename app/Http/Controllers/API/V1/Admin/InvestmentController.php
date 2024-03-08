@@ -1457,6 +1457,24 @@ class InvestmentController extends Controller
             "status" => "success",
         ], 200);
     }
+    public function haltinvestments(Request $request){
+        Investment::where('type', '1')->where('status', '1')->whereIn('investmentid', $request->investmentlist)->update([
+            'hold'=>'2',
+        ]);
+        return response()->json([
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
+    }
+    public function unhaltinvestments(Request $request){
+        Investment::where('type', '1')->where('status', '1')->whereIn('investmentid', $request->investmentlist)->update([
+            'hold'=>'0',
+        ]);
+        return response()->json([
+            "message"=>"Successful",
+            "status" => "success",
+        ], 200);
+    }
 
     public function destroy(Investment $investment)
     {

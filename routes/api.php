@@ -72,6 +72,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/freezebiginvestments', [InvestmentController::class, 'freezebiginvestments']);
         Route::get('/admin/investments/freezebiginvestments2', [InvestmentController::class, 'freezebiginvestments2']);
         Route::post('/admin/investments/unfreezeinvestments', [InvestmentController::class, 'unfreezeinvestments']);
+        Route::post('/admin/investments/haltinvestments', [InvestmentController::class, 'haltinvestments']);
+        Route::post('/admin/investments/unhaltinvestments', [InvestmentController::class, 'unhaltinvestments']);
         //Route::post('/admin/investments/unexpireinvestments', [InvestmentController::class, 'unexpireinvestments']);
         Route::get('/admin/investments/unfreezeinvestment', [InvestmentController::class, 'unfreezeinvestment']);
         Route::get('/admin/investments/freezeinvestment', [InvestmentController::class, 'freezeinvestment']);

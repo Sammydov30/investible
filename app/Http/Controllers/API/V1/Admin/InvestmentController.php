@@ -755,13 +755,13 @@ class InvestmentController extends Controller
     public function paybulkWeeklyInvestment(Request $request)
     {
         $investments=Investment::where('type', '1')->where('status', '1')->where('hold', '0')->get();
-        $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
         /////////////////
         ///Get Bulk data
         ///////////////////
         $bulkdata=[];
+        $k=1;
         foreach ($investments as $investment) {
             $newdata=(object)[
                 "bank_code"=> $investment->bankcode,
@@ -803,6 +803,7 @@ class InvestmentController extends Controller
         /////////////////
         ///Update records
         ///////////////////
+        $k=1;
         foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,
@@ -835,13 +836,13 @@ class InvestmentController extends Controller
         $investments=Investment::where('type', '1')->where('status', '1')
         ->where('hold', '1')
         ->whereIn('investmentid', $request->investmentlist)->get();
-        $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
         /////////////////
         ///Get Bulk data
         ///////////////////
         $bulkdata=[];
+        $k=1;
         foreach ($investments as $investment) {
             $newdata=(object)[
                 "bank_code"=> $investment->bankcode,
@@ -884,6 +885,7 @@ class InvestmentController extends Controller
         /////////////////
         ///Update records
         ///////////////////
+        $k=1;
         foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,
@@ -916,7 +918,6 @@ class InvestmentController extends Controller
     {
         $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
         ->where('monthtype', '0')->get();
-        $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
         $mdate=date("F-Y");
@@ -924,6 +925,7 @@ class InvestmentController extends Controller
         ///Get Bulk data
         ///////////////////
         $bulkdata=[];
+        $k=1;
         foreach ($investments as $investment) {
             $newdata=(object)[
                 "bank_code"=> $investment->bankcode,
@@ -965,6 +967,7 @@ class InvestmentController extends Controller
         /////////////////
         ///Update records
         ///////////////////
+        $k=1;
         foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,
@@ -997,7 +1000,6 @@ class InvestmentController extends Controller
     {
         $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '1')
         ->where('monthtype', '0')->get();
-        $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
         $mdate=date("F-Y");
@@ -1005,6 +1007,7 @@ class InvestmentController extends Controller
         ///Get Bulk data
         ///////////////////
         $bulkdata=[];
+        $k=1;
         foreach ($investments as $investment) {
             $newdata=(object)[
                 "bank_code"=> $investment->bankcode,
@@ -1046,6 +1049,7 @@ class InvestmentController extends Controller
         /////////////////
         ///Update records
         ///////////////////
+        $k=1;
         foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,
@@ -1078,7 +1082,6 @@ class InvestmentController extends Controller
     {
         $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
         ->where('monthtype', '1')->get();
-        $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
         $mdate=date("F-Y");
@@ -1086,6 +1089,7 @@ class InvestmentController extends Controller
         ///Get Bulk data
         ///////////////////
         $bulkdata=[];
+        $k=1;
         foreach ($investments as $investment) {
             $newdata=(object)[
                 "bank_code"=> $investment->bankcode,
@@ -1127,6 +1131,7 @@ class InvestmentController extends Controller
         /////////////////
         ///Update records
         ///////////////////
+        $k=1;
         foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,
@@ -1159,7 +1164,6 @@ class InvestmentController extends Controller
     {
         $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
         ->whereIn('investmentid', $request->investmentlist)->get();
-        $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
         $mdate=date("F-Y");
@@ -1167,6 +1171,7 @@ class InvestmentController extends Controller
         ///Get Bulk data
         ///////////////////
         $bulkdata=[];
+        $k=1;
         foreach ($investments as $investment) {
             $newdata=(object)[
                 "bank_code"=> $investment->bankcode,
@@ -1208,6 +1213,7 @@ class InvestmentController extends Controller
         /////////////////
         ///Update records
         ///////////////////
+        $k=1;
         foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,
@@ -1579,13 +1585,13 @@ class InvestmentController extends Controller
     public function payweekRemaining(Request $request)
     {
         $investments=Investment::where('type', '1')->where('status', '1')->whereNull('lastpaymentdate')->get();
-        $k=1;
         $refcode="IP".time();
         $date=date("d-m-Y");
         /////////////////
         ///Get Bulk data
         ///////////////////
         $bulkdata=[];
+        $k=1;
         foreach ($investments as $investment) {
             $newdata=(object)[
                 "bank_code"=> $investment->bankcode,
@@ -1627,6 +1633,7 @@ class InvestmentController extends Controller
         /////////////////
         ///Update records
         ///////////////////
+        $k=1;
         foreach ($investments as $investment) {
             PaymentHistory::create([
                 'transfercode'=>$refcode.$k,

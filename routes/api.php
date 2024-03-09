@@ -56,11 +56,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/admin/investments/quickupdatemonth/{investment}', [InvestmentController::class, 'sharpupdateM']);
         Route::post('/admin/investments/quickupdatemonthu', [InvestmentController::class, 'sharpupdateUM']);
         Route::post('/admin/investments/uploadold', [InvestmentController::class, 'uploadold']);
-        Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
+        //Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
         Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);
         Route::post('/admin/investments/getreadymonth', [InvestmentController::class, 'updateReadyMonth']);
         Route::post('/admin/investments/checkpast', [InvestmentController::class, 'updatePast']);
-        Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
         Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
         Route::get('/admin/investments/fetchexportableinvestments', [InvestmentController::class, 'exportable']);
         Route::get('/admin/investments/get-investment/{investment}', [InvestmentController::class, 'show']);
@@ -95,7 +94,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/admin/get-admins', [AdminController::class, 'index']);
             Route::get('/admin/get-admin/{admin}', [AdminController::class, 'show']);
             Route::delete('/admin/delete/{admin}', [AdminController::class, 'destroy']);
-
+            Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
             Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
             Route::post('/admin/investments/justpayinvestment', [InvestmentController::class, 'justpayInvestment']);
             Route::post('/admin/investments/retrypayment', [InvestmentController::class, 'retrypayment']);

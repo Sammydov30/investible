@@ -754,7 +754,7 @@ class InvestmentController extends Controller
     }
     public function paybulkWeeklyInvestment(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')->where('hold', '0')->get();
+        $investments=Investment::where('type', '1')->where('status', '1')->where('approve', '1')->where('hold', '0')->get();
         $refcode="IP".time();
         $date=date("d-m-Y");
         /////////////////
@@ -833,7 +833,7 @@ class InvestmentController extends Controller
     }
     public function paybulkWeeklyFrozenInvestment(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')
+        $investments=Investment::where('type', '1')->where('status', '1')->where('approve', '1')
         ->where('hold', '1')
         ->whereIn('investmentid', $request->investmentlist)->get();
         $refcode="IP".time();
@@ -916,7 +916,8 @@ class InvestmentController extends Controller
 
     public function paybulkMonthlyInvestment(Request $request)
     {
-        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
+        $investments=Investment::where('type', '2')->where('status', '1')->where('approve', '1')
+        ->where('hold', '0')
         ->where('monthtype', '0')->get();
         $refcode="IP".time();
         $date=date("d-m-Y");
@@ -998,7 +999,8 @@ class InvestmentController extends Controller
 
     public function paybulkMonthlyFrozenInvestment(Request $request)
     {
-        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '1')
+        $investments=Investment::where('type', '2')->where('status', '1')->where('approve', '1')
+        ->where('hold', '1')
         ->where('monthtype', '0')->get();
         $refcode="IP".time();
         $date=date("d-m-Y");
@@ -1080,7 +1082,8 @@ class InvestmentController extends Controller
 
     public function paybulkMonthlyInvestment2(Request $request)
     {
-        $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
+        $investments=Investment::where('type', '2')->where('status', '1')->where('approve', '1')
+        ->where('hold', '0')
         ->where('monthtype', '1')->get();
         $refcode="IP".time();
         $date=date("d-m-Y");
@@ -1268,8 +1271,8 @@ class InvestmentController extends Controller
     public function freezebiginvestments(Request $request)
     {
         $investments=Investment::where('type', $request->type)->where('status', '1')
-        ->where('return', '>=', $request->stopamount)->where('monthtype', '0')
-        ->where('accountnumber', '!=', '6192080675')->where('hold', '1')->orderby('return', 'desc')
+        ->where('return', '>=', $request->stopamount)->where('monthtype', '0')->where('approve', '1')
+        ->where('accountnumber', '!=', '6192080675')->where('hold', '0')->orderby('return', 'desc')
         ->get();
         $investments=json_decode(json_encode($investments), true);
         $totalamount=0;
@@ -1491,6 +1494,20 @@ class InvestmentController extends Controller
         $investment->delete();
         $response=[
             "message" => "Investment Deleted Successfully",
+            "status" => "success"
+        ];
+        return response()->json($response, 200);
+    }
+
+    public function approve(Investment $investment)
+    {
+        //print_r($investment); exit();
+        $this->AddLog(json_encode($investment), 'investment', 'Approved');
+        $investment->update([
+            'approve' => '1'
+        ]);
+        $response=[
+            "message" => "Investment Approved Successfully",
             "status" => "success"
         ];
         return response()->json($response, 200);

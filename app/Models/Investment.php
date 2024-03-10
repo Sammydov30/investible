@@ -37,6 +37,9 @@ class Investment extends Model
         'lastpaymentdate',
         'pop',
         'agreementdoc',
+        'approve',
+        'hold',
+        'monthtype',
         'status'
     ];
 

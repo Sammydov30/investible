@@ -1255,7 +1255,7 @@ class InvestmentController extends Controller
             "Authorization" => "Bearer ".env('FW_KEY'),
         ])->post('https://api.flutterwave.com/v3/transfers/'.$request->paymentid.'/retries');
         $res=$paymentrequest->json();
-        print_r($res); exit();
+        //print_r($res); exit();
         if (!$res['status']) {
             return response()->json(["message" => "An Error occurred while fetching account", "status" => "error"], 400);
         }

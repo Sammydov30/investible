@@ -900,11 +900,11 @@ class InvestmentController extends Controller
             ]);
             $newapsf=$investment->amountpaidsofar+$investment->return;
             $newtr=$investment->timeremaining-1;
-            Investment::where('investmentid', $investment->investmentid)->update([
-                'amountpaidsofar'=>$newapsf,
-                'timeremaining'=>$newtr,
-                'lastpaymentdate'=>$date
-            ]);
+            // Investment::where('investmentid', $investment->investmentid)->update([
+            //     'amountpaidsofar'=>$newapsf,
+            //     'timeremaining'=>$newtr,
+            //     'lastpaymentdate'=>$date
+            // ]);
             $k++;
         }
         $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'SuccessPayment');

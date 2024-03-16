@@ -8,7 +8,9 @@ use App\Http\Requests\Investment\SharpUpdateInvestmentMRequest;
 use App\Http\Requests\Investment\SharpUpdateInvestmentRequest;
 use App\Http\Requests\Investment\UpdateInvestmentRequest;
 use App\Http\Requests\Investment\UploadOldInvestmentRequest;
+use App\Jobs\Admin\AdminPhoneOtpJob;
 use App\Models\Account;
+use App\Models\Admin;
 use App\Models\Bank;
 use App\Models\BulkPaymentHistory;
 use App\Models\Investment;
@@ -19,6 +21,7 @@ use App\Traits\ActionLogTrait;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 use function PHPUnit\Framework\isNull;
 
@@ -52,11 +55,28 @@ class InvestmentController extends Controller
             $result->where('hold', request()->input("freeze"));
         }
         if (request()->input("status")!=null) {
-            //$result->where('status', request()->input("status"));
-            if (request()->input("status")=='1') {
-                $result->whereIn('status', ['0', '1']);
-            }
+            $result->where('status', request()->input("status"));
+            // if (request()->input("status")=='1') {
+            //     $result->whereIn('status', ['0', '1']);
+            // }
         }
+        if (request()->input("stopdate") != null) {
+            if (request()->input("startdate") == null) {
+                return response()->json(["message" => "start-date required if end-date given.", "status" => "error"], 400);
+            }
+            $startdate= date('d-m-Y',strtotime(request()->input("startdate")));
+            $enddate=date('d-m-Y',strtotime(request()->input("stopdate")));
+            $result->where(function($query) use($startdate, $enddate) {
+                $query->where('startdate', '>=', $startdate)->where('startdate', '<=', $enddate);
+            });
+        }elseif(request()->input("startdate") != null){
+            $startdate= date('d-m-Y',strtotime(request()->input("startdate")));
+            $enddate=date("d-m-Y");
+            $result->where(function($query) use($startdate, $enddate) {
+                $query->where('startdate', '>=', $startdate)->where('startdate', '<=', $enddate);
+            });
+        }
+
         if ((request()->input("sortBy")!=null) && in_array(request()->input("sortBy"), ['id', 'created_at'])) {
             $sortBy=request()->input("sortBy");
         }else{
@@ -621,6 +641,16 @@ class InvestmentController extends Controller
 
     public function justpayInvestment(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
         if (empty($request->investmentid)) {
             return response()->json(["message"=>"Investment Id is required", "status"=>"error"], 400);
         }
@@ -681,6 +711,17 @@ class InvestmentController extends Controller
     }
     public function payInvestment(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
+
         if (empty($request->investmentid)) {
             return response()->json(["message"=>"Investment Id is required", "status"=>"error"], 400);
         }
@@ -754,6 +795,17 @@ class InvestmentController extends Controller
     }
     public function paybulkWeeklyInvestment(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
+
         $investments=Investment::where('type', '1')->where('status', '1')->where('approve', '1')->where('hold', '0')->get();
         $refcode="IP".time();
         $date=date("d-m-Y");
@@ -833,9 +885,19 @@ class InvestmentController extends Controller
     }
     public function paybulkWeeklyFrozenInvestment(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
         $investments=Investment::where('type', '1')->where('status', '1')->where('approve', '1')
-        ->where('hold', '1')
-        ->whereIn('investmentid', $request->investmentlist)->get();
+        ->where('hold', '1')->get();
+        // ->whereIn('investmentid', $request->investmentlist)->get();
         $refcode="IP".time();
         $date=date("d-m-Y");
         /////////////////
@@ -909,13 +971,24 @@ class InvestmentController extends Controller
         }
         $this->AddLog(json_encode($bulkdata), 'weekbulkpayment', 'SuccessPayment');
         return response()->json([
-            "message"=>"Investment Payment Dispatched Successfully",
+            "message"=>"Investment Payment Batch 2 Dispatched Successfully",
             "status" => "success",
         ], 200);
     }
 
     public function paybulkMonthlyInvestment(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
+
         $investments=Investment::where('type', '2')->where('status', '1')->where('approve', '1')
         ->where('hold', '0')
         ->where('monthtype', '0')->get();
@@ -999,6 +1072,16 @@ class InvestmentController extends Controller
 
     public function paybulkMonthlyFrozenInvestment(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
         $investments=Investment::where('type', '2')->where('status', '1')->where('approve', '1')
         ->where('hold', '1')
         ->where('monthtype', '0')->get();
@@ -1082,6 +1165,16 @@ class InvestmentController extends Controller
 
     public function paybulkMonthlyInvestment2(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
         $investments=Investment::where('type', '2')->where('status', '1')->where('approve', '1')
         ->where('hold', '0')
         ->where('monthtype', '1')->get();
@@ -1165,6 +1258,16 @@ class InvestmentController extends Controller
 
     public function paybulkMonthlyInvestmentsharp(Request $request)
     {
+        $admin=auth()->user();
+        $currtime=time();
+        if(empty($request->otp)){
+            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        }
+        if($request->otp!=$admin->otp){
+            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        }elseif($currtime>$admin->expiration){
+            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        }
         $investments=Investment::where('type', '2')->where('status', '1')->where('hold', '0')
         ->whereIn('investmentid', $request->investmentlist)->get();
         $refcode="IP".time();
@@ -1270,6 +1373,10 @@ class InvestmentController extends Controller
 
     public function freezebiginvestments(Request $request)
     {
+        $check=Investment::where('hold', '1')->where('type', $request->type)->where('status', '1')->first();
+        if($check!==null){
+            return response()->json(["message" => "Investments Already Splitted. Try again", "status" => "error"], 400);
+        }
         $investments=Investment::where('type', $request->type)->where('status', '1')
         ->where('return', '>=', $request->stopamount)->where('monthtype', '0')->where('approve', '1')
         ->where('accountnumber', '!=', '6192080675')->where('hold', '0')->orderby('return', 'desc')
@@ -1558,7 +1665,7 @@ class InvestmentController extends Controller
 
     public function GetPayingAmount(Request $request)
     {
-        $investments=Investment::where('type', '1')->where('status', '1')->where('hold', '0')->get();
+        $investments=Investment::where('type', '1')->where('status', '1')->whereIn('hold', ['0', '1'])->get();
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->return);
@@ -1573,7 +1680,7 @@ class InvestmentController extends Controller
     public function GetMPayingAmount(Request $request)
     {
         $investments=Investment::where('type', '2')->where('status', '1')
-        ->where('monthtype', '0')->where('hold', '0')->get();
+        ->where('monthtype', '0')->whereIn('hold', ['0', '1'])->get();
         $totalamount=0;
         foreach ($investments as $investment) {
             $totalamount=$totalamount+intval($investment->return);
@@ -1713,6 +1820,46 @@ class InvestmentController extends Controller
             "status" => "success",
             'amount' => $totalamount,
         ], 200);
+    }
+
+    public function sendOTP(Request $request)
+    {
+        $admin=auth()->user();
+        $otp=$this->generate_otp();
+        $expiration = time()+600;
+        $user = Admin::where('username', $admin->username)->update(
+            ['otp'=>$otp, 'expiration'=>$expiration],
+        );
+        $details = [
+            //'phone'=>'234'.substr($admin->phone, 0),
+            'phone'=>'234'.substr('07065975827', 0),
+            'otp'=>$otp,
+            'subject' => 'Investible Account Verification',
+        ];
+        try {
+            dispatch(new AdminPhoneOtpJob($details))->delay(now()->addSeconds(1));
+        } catch (\Throwable $e) {
+            report($e);
+            Log::error('Error in sending otp: '.$e->getMessage());
+        }
+        $response=[
+            //'email' => $request->email,
+            'phone' => $admin->phone,
+            "expiration" => $expiration,
+            'message' => 'OTP is successfully sent to '.$this->maskPhoneNumber($admin->phone),
+            "status" => "success"
+        ];
+        return response()->json($response, 201);
+    }
+
+    public function generate_otp(){
+        $data=mt_rand(100000,999999);
+        return $data;
+    }
+
+    function maskPhoneNumber($number){
+        $mask_number =  substr($number, 0, 2) . str_repeat("*", strlen($number)-4) . substr($number, -4);
+        return $mask_number;
     }
 
 }

@@ -56,10 +56,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/admin/investments/quickupdatemonth/{investment}', [InvestmentController::class, 'sharpupdateM']);
         Route::post('/admin/investments/quickupdatemonthu', [InvestmentController::class, 'sharpupdateUM']);
         Route::post('/admin/investments/uploadold', [InvestmentController::class, 'uploadold']);
-        Route::post('/admin/investments/approve/{investment}', [InvestmentController::class, 'approve']);
         //Route::post('/admin/investments/create', [InvestmentController::class, 'store']);
-        Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);
-        Route::post('/admin/investments/getreadymonth', [InvestmentController::class, 'updateReadyMonth']);
         Route::post('/admin/investments/checkpast', [InvestmentController::class, 'updatePast']);
         Route::get('/admin/investments/fetchinvestments', [InvestmentController::class, 'index']);
         Route::get('/admin/investments/fetchexportableinvestments', [InvestmentController::class, 'exportable']);
@@ -69,11 +66,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/getsplitamount', [InvestmentController::class, 'GetSplitPayingAmount']);
         Route::get('/admin/investments/getremainingpayoutamount', [InvestmentController::class, 'GetRemainingAmount']);
         Route::get('/admin/investments/getremainingpayoutamountmonthly', [InvestmentController::class, 'GetRemainingMonthlyAmount']);
-        Route::get('/admin/investments/freezebiginvestments', [InvestmentController::class, 'freezebiginvestments']);
-        Route::get('/admin/investments/freezebiginvestments2', [InvestmentController::class, 'freezebiginvestments2']);
         Route::post('/admin/investments/unfreezeinvestments', [InvestmentController::class, 'unfreezeinvestments']);
-        Route::post('/admin/investments/haltinvestments', [InvestmentController::class, 'haltinvestments']);
-        Route::post('/admin/investments/unhaltinvestments', [InvestmentController::class, 'unhaltinvestments']);
         //Route::post('/admin/investments/unexpireinvestments', [InvestmentController::class, 'unexpireinvestments']);
         Route::get('/admin/investments/unfreezeinvestment', [InvestmentController::class, 'unfreezeinvestment']);
         Route::get('/admin/investments/freezeinvestment', [InvestmentController::class, 'freezeinvestment']);
@@ -81,6 +74,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/admin/investments/getfrozeninvestmentsbyid2', [InvestmentController::class, 'getfrozeninvestmentsbyid2']);
         Route::get('/admin/investments/getfrozeninvestmentsaccountdetails', [InvestmentController::class, 'getfrozeninvestmentsaccountdetails']);
         Route::get('/admin/investments/getfrozeninvestmentsaccountdetails2', [InvestmentController::class, 'getfrozeninvestmentsaccountdetails2']);
+        Route::post('/admin/investments/sendotp', [InvestmentController::class, 'sendOTP']);
 
         //Payment History
         Route::get('/admin/payments/fetchhistories', [PaymentHistoryController::class, 'index']);
@@ -88,19 +82,29 @@ Route::prefix('v1')->group(function () {
         //Action Logs
         Route::get('/admin/fetchlogs', [ActionLogController::class, 'index']);
 
-
-        Route::middleware(['restrictothers'])->group(function () {
+        Route::middleware(['customersupport', 'techsupport'])->group(function () {
+            Route::post('/admin/investments/approve/{investment}', [InvestmentController::class, 'approve']);
+            Route::post('/admin/investments/haltinvestments', [InvestmentController::class, 'haltinvestments']);
+            Route::post('/admin/investments/unhaltinvestments', [InvestmentController::class, 'unhaltinvestments']);
+        });
+        Route::middleware(['techsupport'])->group(function () {
             Route::post('/admin/create', [AdminController::class, 'register']);
             Route::post('/admin/edit/{admin}', [AdminController::class, 'update']);
             Route::get('/admin/get-admins', [AdminController::class, 'index']);
             Route::get('/admin/get-admin/{admin}', [AdminController::class, 'show']);
             Route::delete('/admin/delete/{admin}', [AdminController::class, 'destroy']);
             Route::delete('/admin/investments/delete/{investment}', [InvestmentController::class, 'destroy']);
+            Route::get('/admin/investments/freezebiginvestments', [InvestmentController::class, 'freezebiginvestments']);
+            Route::get('/admin/investments/freezebiginvestments2', [InvestmentController::class, 'freezebiginvestments2']);
+            Route::post('/admin/investments/getready', [InvestmentController::class, 'updateReady']);
+            Route::post('/admin/investments/getreadymonth', [InvestmentController::class, 'updateReadyMonth']);
+        });
+        Route::middleware(['restrictothers'])->group(function () {
             Route::post('/admin/investments/payinvestment', [InvestmentController::class, 'payInvestment']);
             Route::post('/admin/investments/justpayinvestment', [InvestmentController::class, 'justpayInvestment']);
             //Route::post('/admin/investments/retrypayment', [InvestmentController::class, 'retrypayment']);
-            //Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
-            //Route::post('/admin/investments/payweeklyfrozeninvestment', [InvestmentController::class, 'paybulkWeeklyFrozenInvestment']);
+            Route::post('/admin/investments/payweeklyinvestment', [InvestmentController::class, 'paybulkWeeklyInvestment']);
+            Route::post('/admin/investments/payweeklyfrozeninvestment', [InvestmentController::class, 'paybulkWeeklyFrozenInvestment']);
             //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
             //Route::post('/admin/investments/paymonthlyfrozeninvestment', [InvestmentController::class, 'paybulkMonthlyFrozenInvestment']);
             //Route::post('/admin/investments/paymonthlyinvestment20th', [InvestmentController::class, 'paybulkMonthlyInvestment2']);
@@ -110,6 +114,7 @@ Route::prefix('v1')->group(function () {
 
     });
     Route::post('/admin/auth/login', [AdminAuthController::class, 'login']);
+    Route::post('/admin/auth/verifyotp', [AdminAuthController::class, 'check_otp']);
 
     Route::get('/fetchbanks', [BankController::class, 'fetchbanks']);
     Route::get('/fetchaccountdetails', [AccountController::class, 'getAccountName']);

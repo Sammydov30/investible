@@ -3,7 +3,9 @@
 namespace App\Http;
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CustomerSupport;
 use App\Http\Middleware\RestrictotherAdmins;
+use App\Http\Middleware\TechnicalSupport;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -68,5 +70,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'type.admin' => AdminMiddleware::class,
         'restrictothers' => RestrictotherAdmins::class,
+        'customersupport' => CustomerSupport::class,
+        'techsupport' => TechnicalSupport::class,
     ];
 }

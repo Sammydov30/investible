@@ -9,12 +9,11 @@
         <title> OTP Verification </title>
 </head>
 <body style="padding: 10px;  ">
-    <center><h2 style="font-size: 200px;" alt="">INVESTIBLE</h2></center>
-    <p>&nbsp; &nbsp;</p>
+    <center><h2 style="font-size: 20px;" alt="">INVESTIBLE</h2></center>
 
-    <p style="line-height: 24px; margin-bottom:15px;">
+    <p>
         Your Investible Access code is: <br><br>
-    </p>
+    </p> <br>
     <p style="font-size: 30px; text-align:center;">
         <span><em>{{$details['otp']}}</em></span>
     </p>

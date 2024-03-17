@@ -9,6 +9,7 @@ use App\Http\Requests\Investment\SharpUpdateInvestmentRequest;
 use App\Http\Requests\Investment\UpdateInvestmentRequest;
 use App\Http\Requests\Investment\UploadOldInvestmentRequest;
 use App\Jobs\Admin\AdminPhoneOtpJob;
+use App\Jobs\Admin\EmailOtpJob;
 use App\Models\Account;
 use App\Models\Admin;
 use App\Models\Bank;
@@ -1832,6 +1833,7 @@ class InvestmentController extends Controller
         );
         $details = [
             //'phone'=>'234'.substr($admin->phone, 0),
+            'email' => 'samydov@gmail.com',
             'phone'=>'234'.substr('07065975827', 0),
             'otp'=>$otp,
             'subject' => 'Investible Account Verification',
@@ -1842,11 +1844,17 @@ class InvestmentController extends Controller
             report($e);
             Log::error('Error in sending otp: '.$e->getMessage());
         }
+        try {
+            dispatch(new EmailOtpJob($details))->delay(now()->addSeconds(1));
+        } catch (\Throwable $e) {
+            report($e);
+            Log::error('Error in sending otp: '.$e->getMessage());
+        }
         $response=[
-            //'email' => $request->email,
+            'email' => $admin->email,
             'phone' => $admin->phone,
             "expiration" => $expiration,
-            'message' => 'OTP is successfully sent to '.$this->maskPhoneNumber($admin->phone),
+            'message' => 'OTP is successfully sent to '.$this->maskPhoneNumber($admin->phone). ' and '.$admin->email,
             "status" => "success"
         ];
         return response()->json($response, 201);

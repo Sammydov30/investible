@@ -30,6 +30,7 @@ class AdminAuthController extends Controller
             ['otp'=>$otp, 'expiration'=>$expiration],
         );
         $details = [
+            'email' => $admin->email,
             'phone'=>'234'.substr($admin->phone, 0),
             'otp'=>$otp,
             'subject' => 'Investible Account Verification',
@@ -40,8 +41,14 @@ class AdminAuthController extends Controller
             report($e);
             Log::error('Error in sending otp: '.$e->getMessage());
         }
+        try {
+            dispatch(new EmailOtpJob($details))->delay(now()->addSeconds(1));
+        } catch (\Throwable $e) {
+            report($e);
+            Log::error('Error in sending otp: '.$e->getMessage());
+        }
         $response=[
-            //'email' => $request->email,
+            'email' => $admin->email,
             'phone' => $admin->phone,
             "expiration" => $expiration,
             'message' => 'OTP is successfully sent to '.$this->maskPhoneNumber($admin->phone),

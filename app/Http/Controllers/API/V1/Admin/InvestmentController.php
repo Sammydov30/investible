@@ -736,9 +736,9 @@ class InvestmentController extends Controller
         if ($investment->status=='2') {
             return response()->json(["message"=>"This Investment's payment is over", "status"=>"error"], 400);
         }
-        if ($investment->hold=='1') {
-            return response()->json(["message"=>"This Investment is frozen at the moment", "status"=>"error"], 400);
-        }
+        // if ($investment->hold=='1') {
+        //     return response()->json(["message"=>"This Investment is frozen at the moment", "status"=>"error"], 400);
+        // }
         if ($investment->hold=='2') {
             return response()->json(["message"=>"This Investment is halted at the moment", "status"=>"error"], 400);
         }

@@ -82,7 +82,7 @@ Route::prefix('v1')->group(function () {
         //Action Logs
         Route::get('/admin/fetchlogs', [ActionLogController::class, 'index']);
 
-        Route::middleware(['customersupport', 'techsupport'])->group(function () {
+        Route::middleware(['customersupport'])->group(function () {
             Route::post('/admin/investments/approve/{investment}', [InvestmentController::class, 'approve']);
             Route::post('/admin/investments/haltinvestments', [InvestmentController::class, 'haltinvestments']);
             Route::post('/admin/investments/unhaltinvestments', [InvestmentController::class, 'unhaltinvestments']);

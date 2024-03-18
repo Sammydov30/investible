@@ -23,7 +23,7 @@ class CustomerSupport
         //Auth::check();
         $user=Auth::user();
 
-        if ($user && ( (int)$user->role !== 0 && (int)$user->role !== 1)){
+        if ($user && ( (int)$user->role !== 0 && (int)$user->role !== 1 && (int)$user->role !== 2)){
             // fail and redirect silently if we already have a user with that role
             return response()->json(["message" => "Not Authorized", "status" => "error"], 401);
         }

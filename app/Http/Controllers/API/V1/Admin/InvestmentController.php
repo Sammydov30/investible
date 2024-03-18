@@ -714,14 +714,14 @@ class InvestmentController extends Controller
     {
         $admin=auth()->user();
         $currtime=time();
-        if(empty($request->otp)){
-            return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
-        }
-        if($request->otp!=$admin->otp){
-            return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
-        }elseif($currtime>$admin->expiration){
-            return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
-        }
+        // if(empty($request->otp)){
+        //     return response()->json(["message" => "OTP is Required. Try again", "status" => "error"], 400);
+        // }
+        // if($request->otp!=$admin->otp){
+        //     return response()->json(["message" => "OTP Verification Failed. Try again", "status" => "error"], 400);
+        // }elseif($currtime>$admin->expiration){
+        //     return response()->json(["message" => "OTP Expired.", "status" => "error"], 400);
+        // }
 
         if (empty($request->investmentid)) {
             return response()->json(["message"=>"Investment Id is required", "status"=>"error"], 400);

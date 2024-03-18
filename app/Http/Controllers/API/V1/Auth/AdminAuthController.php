@@ -51,7 +51,8 @@ class AdminAuthController extends Controller
             'email' => $admin->email,
             'phone' => $admin->phone,
             "expiration" => $expiration,
-            'message' => 'OTP is successfully sent to '.$this->maskPhoneNumber($admin->phone),
+            //'message' => 'OTP is successfully sent to '.$this->maskPhoneNumber($admin->phone).' and '.$admin->email,
+            'message' => 'OTP sent',
             "status" => "success"
         ];
         return response()->json($response, 201);

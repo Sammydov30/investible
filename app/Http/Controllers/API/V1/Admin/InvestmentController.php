@@ -1199,14 +1199,14 @@ class InvestmentController extends Controller
             array_push($bulkdata, $newdata);
             $k++;
         }
-        //print_r($bulkdata);
+        print_r($bulkdata); exit();
 
         /////////////////
         ///Make Payment
         ///////////////////
         $paymentrequest = Http::withHeaders([
             "content-type" => "application/json",
-            "Authorization" => "Bearer ".env('FW_KEY'),
+            "Authorization" => "Bearer ".env('FW_KEYT'),
         ])->post('https://api.flutterwave.com/v3/bulk-transfers', [
             "title"=> "Monthly Bulk Payment for ".$mdate,
             "bulk_data"=> $bulkdata,

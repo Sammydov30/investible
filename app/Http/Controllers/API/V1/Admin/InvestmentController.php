@@ -560,9 +560,9 @@ class InvestmentController extends Controller
             }
         }
 
-        Investment::where('type', '2')->where('timeremaining', '<=', '0')->update([
-            'status' => '2',
-        ]);
+        // Investment::where('type', '2')->where('timeremaining', '<=', '0')->update([
+        //     'status' => '2',
+        // ]);
         $this->AddLog('Got investment ready for '.$ddd, 'investment', 'GotReady');
         return response()->json([
             "message"=>"Investments are ready for period payment Successfully",

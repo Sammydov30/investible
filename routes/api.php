@@ -107,7 +107,7 @@ Route::prefix('v1')->group(function () {
             //Route::post('/admin/investments/payweeklyfrozeninvestment', [InvestmentController::class, 'paybulkWeeklyFrozenInvestment']);
             //Route::post('/admin/investments/paymonthlyinvestment', [InvestmentController::class, 'paybulkMonthlyInvestment']);
             //Route::post('/admin/investments/paymonthlyfrozeninvestment', [InvestmentController::class, 'paybulkMonthlyFrozenInvestment']);
-            Route::post('/admin/investments/paymonthlyinvestment20th', [InvestmentController::class, 'paybulkMonthlyInvestment2']);
+            //Route::post('/admin/investments/paymonthlyinvestment20th', [InvestmentController::class, 'paybulkMonthlyInvestment2']);
             //Route::post('/admin/investments/paymonthlyinvestmentsharp', [InvestmentController::class, 'paybulkMonthlyInvestmentsharp']);
             //Route::post('/admin/investments/payweekremaininginvestment', [InvestmentController::class, 'payweekRemaining']);
         });

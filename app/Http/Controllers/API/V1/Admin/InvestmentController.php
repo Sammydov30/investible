@@ -1379,7 +1379,7 @@ class InvestmentController extends Controller
             return response()->json(["message" => "Investments Already Splitted. Try again", "status" => "error"], 400);
         }
         $investments=Investment::where('type', $request->type)->where('status', '1')
-        ->where('return', '>=', $request->stopamount)->where('monthtype', '0')->where('approve', '1')
+        ->where('return', '>=', intval($request->stopamount))->where('monthtype', '0')->where('approve', '1')
         ->where('accountnumber', '!=', '6192080675')->where('hold', '0')->orderby('return', 'desc')
         ->get();
         $investments=json_decode(json_encode($investments), true);
